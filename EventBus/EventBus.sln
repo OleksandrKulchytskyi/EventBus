@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{04C2AF
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.Test", "EvenBus.Test\EventBus.Test.csproj", "{D6F25CB1-6D98-4B74-BE61-FFFCA8CE883A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.MessageQueue", "EventBus.MessageQueue\EventBus.MessageQueue.csproj", "{B1DA8997-9669-4E13-BF07-7A0E1C1860C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{8D42E8A5-9858-4FB3-87A5-A878019E5EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D42E8A5-9858-4FB3-87A5-A878019E5EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D42E8A5-9858-4FB3-87A5-A878019E5EFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6F25CB1-6D98-4B74-BE61-FFFCA8CE883A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6F25CB1-6D98-4B74-BE61-FFFCA8CE883A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6F25CB1-6D98-4B74-BE61-FFFCA8CE883A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6F25CB1-6D98-4B74-BE61-FFFCA8CE883A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1DA8997-9669-4E13-BF07-7A0E1C1860C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1DA8997-9669-4E13-BF07-7A0E1C1860C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1DA8997-9669-4E13-BF07-7A0E1C1860C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1DA8997-9669-4E13-BF07-7A0E1C1860C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

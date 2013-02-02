@@ -1,9 +1,6 @@
 ﻿using log4net;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace EventBus.Logging
 {
@@ -218,7 +215,7 @@ namespace EventBus.Logging
 			GetLoggerForCall().WarnFormat(format, args);
 		}
 
-		#endregion
+		#endregion ILog Members
 
 		#region ILoggerWrapper Members
 
@@ -227,6 +224,6 @@ namespace EventBus.Logging
 			get { return GetLoggerForCall().Logger; }
 		}
 
-		#endregion
+		#endregion ILoggerWrapper Members
 	}
 }

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8D42E8A5-9858-4FB3-87A5-A878019E5EFF}</ProjectGuid>
+    <ProjectGuid>{B1DA8997-9669-4E13-BF07-7A0E1C1860C6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EventBus</RootNamespace>
-    <AssemblyName>EventBus</AssemblyName>
+    <RootNamespace>EventBus.MessageQueue</RootNamespace>
+    <AssemblyName>EventBus.MessageQueue</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -35,20 +35,9 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration">
-      <HintPath>..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,34 +45,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Extensions\ConfigExt.cs" />
-    <Compile Include="Config\ConfigurationCollectionGeneric.cs" />
-    <Compile Include="Config\EventBusConfigSection.cs" />
-    <Compile Include="Extensions\AssemblyExtension.cs" />
-    <Compile Include="Extensions\CreatorExtension.cs" />
-    <Compile Include="Hosting\MemoryPublisher.cs" />
-    <Compile Include="Hosting\MemorySubscriber.cs" />
-    <Compile Include="Implementation\DefaultCreator.cs" />
-    <Compile Include="Implementation\Publishers.cs" />
-    <Compile Include="Implementation\Subscribers.cs" />
-    <Compile Include="Implementation\UnityCreator.cs" />
-    <Compile Include="Implementation\WireDriver.cs" />
-    <Compile Include="Infrastructure\Contracts.cs" />
-    <Compile Include="Infrastructure\DefaultSingleton.cs" />
-    <Compile Include="Infrastructure\ICreator.cs" />
-    <Compile Include="Infrastructure\IPublisher.cs" />
-    <Compile Include="Infrastructure\ISubscriber.cs" />
-    <Compile Include="Infrastructure\IUnsubscribe.cs" />
-    <Compile Include="Infrastructure\MainDelegates.cs" />
-    <Compile Include="Infrastructure\SingletonBase.cs" />
-    <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Services\MonitorService.cs" />
+    <Compile Include="Extensions\MsqmExtensions.cs" />
+    <Compile Include="Extensions\Utilities.cs" />
+    <Compile Include="Infrastructure\MessageQueueRequest.cs" />
+    <Compile Include="Infrastructure\PublisherMQ.cs" />
+    <Compile Include="Infrastructure\SubscriberMQ.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EventBus\EventBus.csproj">
+      <Project>{8d42e8a5-9858-4fb3-87a5-a878019e5eff}</Project>
+      <Name>EventBus</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

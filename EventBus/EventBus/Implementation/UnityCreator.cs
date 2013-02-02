@@ -3,20 +3,23 @@ using EventBus.Logging;
 using log4net;
 using Microsoft.Practices.Unity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace EventBus.Implementation
 {
-	public sealed class UnityCreator:SingletonBase<UnityCreator>,ICreator
+	public sealed class UnityCreator : ICreator
 	{
 		public IUnityContainer Container { get; set; }
 
-		private UnityCreator()
+		public UnityCreator()
 		{
 			this.Container = new UnityContainer();
 			this.Container.RegisterInstance<ILog>(new Logger());
+			DefaultSingleton<ICreator>.Instance = this;
+		}
+
+		public UnityCreator(IUnityContainer unityContainer)
+		{
+			this.Container = unityContainer;
 		}
 
 		public object Create(Type type)
