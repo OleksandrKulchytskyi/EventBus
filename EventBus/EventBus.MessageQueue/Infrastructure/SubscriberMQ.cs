@@ -3,15 +3,13 @@ using EventBus.Logging;
 using EventBus.MessageQueue.Extensions;
 using log4net;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace EventBus.MessageQueue.Infrastructure
 {
 	public class SubscriberMQ<TEvnt> : ISubscriber<TEvnt>
 	{
 		protected readonly System.Messaging.IMessageFormatter _formatter;
+
 		protected ILog Logger { get; set; }
 
 		public virtual string QueuePath { get; set; }

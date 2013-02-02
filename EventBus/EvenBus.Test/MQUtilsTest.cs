@@ -1,6 +1,6 @@
-﻿using System;
+﻿using EventBus.MessageQueue.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using EventBus.MessageQueue.Infrastructure;
+using System;
 using System.Threading;
 
 namespace EvenBus.Test
@@ -8,13 +8,14 @@ namespace EvenBus.Test
 	[TestClass]
 	public class MQUtilsTest
 	{
-		ManualResetEvent mre;
+		private ManualResetEvent mre;
 
 		[TestInitialize]
 		public void Init()
 		{
 			mre = new ManualResetEvent(false);
 		}
+
 		[TestCleanup]
 		public void Clean()
 		{
@@ -60,12 +61,12 @@ namespace EvenBus.Test
 			}
 		}
 
-		void data_EventHandled(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
+		private void data_EventHandled(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
 		{
 			mre.Set();
 		}
 
-		void data_EventReceived(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
+		private void data_EventReceived(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
 		{
 			mre.Set();
 		}

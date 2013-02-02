@@ -1,10 +1,9 @@
 ﻿using EventBus.Infrastructure;
 using EventBus.Logging;
 using EventBus.MessageQueue.Extensions;
-using EventBus.MessageQueue.Infrastructure;
 using log4net;
 using System;
-using System.Messaging;
+
 namespace EventBus.MessageQueue.Infrastructure
 {
 	public class PublisherMQ<TEvnt> : IPublisher<TEvnt>
@@ -12,6 +11,7 @@ namespace EventBus.MessageQueue.Infrastructure
 		public virtual string QueuePath { get; set; }
 
 		public virtual bool IsTransactional { get; set; }
+
 		protected readonly System.Messaging.IMessageFormatter _formatter;
 
 		protected ILog Logger { get; set; }
