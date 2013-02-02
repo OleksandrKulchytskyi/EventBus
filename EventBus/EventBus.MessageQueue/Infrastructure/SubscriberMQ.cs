@@ -11,18 +11,30 @@ namespace EventBus.MessageQueue.Infrastructure
 {
 	public class SubscriberMQ<TEvnt> : ISubscriber<TEvnt>
 	{
+		protected readonly System.Messaging.IMessageFormatter _formatter;
 		protected ILog Logger { get; set; }
 
 		public virtual string QueuePath { get; set; }
 
 		public SubscriberMQ()
+			: this(new Logger())
 		{
-			Logger = new Logger();
 		}
 
 		public SubscriberMQ(ILog log)
 		{
+			if (log == null)
+				throw new ArgumentNullException("log");
 			this.Logger = log;
+
+			if (Config.EventBusMsmqSection.CheckConfig
+				&& !string.IsNullOrEmpty(Config.EventBusMsmqSection.Current.FormatterType))
+			{
+				Type t = Type.GetType(Config.EventBusMsmqSection.Current.FormatterType);
+				_formatter = Activator.CreateInstance(t) as System.Messaging.IMessageFormatter;
+			}
+			else
+				_formatter = new System.Messaging.XmlMessageFormatter(new Type[] { typeof(TEvnt) });
 		}
 
 		public event EventHandler<BusEventArgs<TEvnt>> EventReceived;
@@ -66,7 +78,7 @@ namespace EventBus.MessageQueue.Infrastructure
 						this.QueuePath, typeof(TEvnt).Name, this.GetType().Name));
 
 				System.Messaging.MessageQueue mq = new System.Messaging.MessageQueue(this.QueuePath);
-				mq.Formatter = new System.Messaging.XmlMessageFormatter(new Type[] { typeof(TEvnt) });
+				mq.Formatter = _formatter;
 				mq.ReceiveCompleted += (sender, e) =>
 				{
 					try

@@ -35,7 +35,11 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Messaging" />
     <Reference Include="System.Xml.Linq" />
@@ -48,8 +52,13 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Config\EventBusMsmqSection.cs" />
     <Compile Include="Extensions\MsqmExtensions.cs" />
     <Compile Include="Extensions\Utilities.cs" />
+    <Compile Include="Formatters\JsonFormatter.cs" />
+    <Compile Include="Implementation\FakeValidator.cs" />
+    <Compile Include="Implementation\QueueNameValidator.cs" />
+    <Compile Include="Infrastructure\IValidator.cs" />
     <Compile Include="Infrastructure\MessageQueueRequest.cs" />
     <Compile Include="Infrastructure\PublisherMQ.cs" />
     <Compile Include="Infrastructure\SubscriberMQ.cs" />
@@ -65,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Scripts\InstallMSMQ.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

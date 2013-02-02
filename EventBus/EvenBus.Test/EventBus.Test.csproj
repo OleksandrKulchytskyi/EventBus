@@ -74,6 +74,7 @@
     <Compile Include="MemoryHostTest.cs" />
     <Compile Include="ConfigTest.cs" />
     <Compile Include="TestSubscriber.cs" />
+    <Compile Include="MQUtilsTest.cs" />
     <Compile Include="WireTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +82,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EventBus.MessageQueue\EventBus.MessageQueue.csproj">
+      <Project>{b1da8997-9669-4e13-bf07-7a0e1c1860c6}</Project>
+      <Name>EventBus.MessageQueue</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EventBus\EventBus.csproj">
       <Project>{8d42e8a5-9858-4fb3-87a5-a878019e5eff}</Project>
       <Name>EventBus</Name>
