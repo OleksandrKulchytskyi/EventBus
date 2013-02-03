@@ -11,20 +11,22 @@ namespace EventBus.RabbitMQ.Infrastructure
 {
 	public class SubscriberRMQ<TEvnt> : ISubscriber<TEvnt>, IUnsubscribe, IConnectionInfo
 	{
-		protected ILog Log;
-
+		protected readonly ILog Log;
 		private IConnection _connection;
 		private QueueingBasicConsumer _consumer;
 		private IModel _model;
+		private delegate object DequeueMethod();
+		private readonly CancellationTokenSource _cts;
 
 		public SubscriberRMQ()
+			: this(LogManager.GetLogger(typeof(TEvnt)))
 		{
-			Log = LogManager.GetLogger(GetType());
 		}
 
 		public SubscriberRMQ(ILog log)
 		{
 			Log = log;
+			_cts = new CancellationTokenSource();
 		}
 
 		public virtual string RoutingKey
@@ -34,7 +36,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 
 		public virtual string ExchangeName
 		{
-			get { return "NEvent"; }
+			get { return "EvetBus"; }
 		}
 
 		public virtual string QueueName
@@ -93,7 +95,16 @@ namespace EventBus.RabbitMQ.Infrastructure
 
 		public void Unsubscribe()
 		{
+			CancelReceive();
 			CloseExistingConnectionAndModel();
+		}
+
+		private void CancelReceive()
+		{
+			if (!_cts.IsCancellationRequested)
+			{
+				_cts.Cancel();
+			}
 		}
 
 		#endregion IUnsubscriber Members
@@ -107,7 +118,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 			}
 		}
 
-		protected virtual void OnEventCaught(TEvnt message)
+		protected virtual void OnEventReceived(TEvnt message)
 		{
 			var ev = EventReceived;
 			if (null != ev)
@@ -138,8 +149,8 @@ namespace EventBus.RabbitMQ.Infrastructure
 		{
 			ConnectionFactory connectionFactory = this.CreateConnectionFactory();
 			var connection = connectionFactory.CreateConnection();
-			var existingConnection = Interlocked.CompareExchange(ref _connection, connection, null);
-			if (null != existingConnection)
+			var extCon = Interlocked.CompareExchange(ref _connection, connection, null);
+			if (extCon != null)
 			{
 				CloseConnection(connection);
 			}
@@ -147,7 +158,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 			{
 				var model = _connection.CreateModel();
 				var existingModel = Interlocked.CompareExchange(ref _model, model, null);
-				if (null != existingModel)
+				if (existingModel != null)
 				{
 					CloseModel(model);
 				}
@@ -165,7 +176,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 
 		private void CloseModel(IModel model)
 		{
-			if (null != model)
+			if (model != null)
 			{
 				model.Close();
 				model.Dispose();
@@ -174,7 +185,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 
 		private void CloseConnection(IConnection connection)
 		{
-			if (null != connection)
+			if (connection != null)
 			{
 				connection.Close();
 				connection.Dispose();
@@ -184,7 +195,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 		private void InvokeAsyncDequeue()
 		{
 			DequeueMethod dq = _consumer.Queue.Dequeue;
-			dq.BeginInvoke(OnDequeueMessage, dq);
+			System.Threading.Tasks.Task.Factory.FromAsync(dq.BeginInvoke, OnDequeueMessage, dq);
 		}
 
 		private void OnDequeueMessage(IAsyncResult ar)
@@ -192,26 +203,29 @@ namespace EventBus.RabbitMQ.Infrastructure
 			BasicDeliverEventArgs message = null;
 			try
 			{
+				if (_cts.IsCancellationRequested)
+					return;
+
 				DequeueMethod dq = (DequeueMethod)ar.AsyncState;
 				message = dq.EndInvoke(ar) as BasicDeliverEventArgs;
+				if (message != null)
+				{
+					OnEventReceived(message.Body.Deserialize<TEvnt>());
+				}
 			}
-			catch (EndOfStreamException eos)
+			catch (EndOfStreamException endEx)
 			{
-				Log.Error(
-					"an end-of-stream exception has occurred while ending the async dequeue operation; the operation will not be requeued",
-					eos);
+				Log.Error("End-of-stream exception has occurred while ending the async dequeue operation; the operation will not be requeued", endEx);
 				return;
 			}
-			catch (Exception e)
+			catch (Exception genEx)
 			{
-				Log.Error(
-					"an exception has occurred while ending the async dequeue operation; the operation will be requeued",
-					e);
+				Log.Error("Exception has occurred while ending the async dequeue operation; \n\r the operation will be requeued", genEx);
 				InvokeAsyncDequeue();
 				return;
 			}
 
-			if (null != message)
+			if (message != null)
 			{
 				try
 				{
@@ -219,8 +233,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 				}
 				catch (Exception e)
 				{
-					Log.Error(
-						"an error occured while handling the message; the next dequeue operation will still occur", e);
+					Log.Error("Error occured while try to handle the message; \n\r the next dequeue operation will still occur", e);
 				}
 			}
 
@@ -230,14 +243,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 		private void HandleMessage(BasicDeliverEventArgs message)
 		{
 			TEvnt e = message.Body.Deserialize<TEvnt>();
-
 			Handle(e);
 		}
-
-		#region Nested type: DequeueMethod
-
-		private delegate object DequeueMethod();
-
-		#endregion Nested type: DequeueMethod
 	}
 }

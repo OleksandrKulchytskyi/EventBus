@@ -39,13 +39,6 @@ namespace EventBus.Infrastructure
 	}
 
 	[DataContract]
-	public class MonitorGetSubscriberListRequest
-	{
-		[DataMember]
-		public string ClientMachineName { get; set; }
-	}
-
-	[DataContract]
 	public class MonitorConnectRequest
 	{
 		[DataMember]
@@ -70,5 +63,12 @@ namespace EventBus.Infrastructure
 
 		[DataMember]
 		public string SubscriberTypeName { get; set; }
+	}
+
+	[DataContract]
+	public class MonitorGetSubscriberListRequest
+	{
+		[DataMember]
+		public string ClientMachineName { get; set; }
 	}
 }

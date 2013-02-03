@@ -30,7 +30,7 @@ namespace EvenBus.Test
 		[TestMethod]
 		public void ReadSubscribedAssembliesTest()
 		{
-			EventBusConfigSection.Current.Subscribers.Assemblies.Cast<AssemblyToWatchElement>().ToList()
+			EventBusConfigSection.Current.Subscribers.Assemblies.Cast<AssemblyElement>().ToList()
 									.ForEach(x =>
 									{
 										Assembly assm = Assembly.Load(x.Assembly);

@@ -45,10 +45,8 @@ namespace EventBus.Implementation
 			{
 				this.AssembliesToSearch.ForEach((assembly) =>
 				{
-					assembly
-						.GetTypes()
-						.Where(a => typeof(ISubscriber<E>).IsAssignableFrom(a) && !a.IsAbstract)
-						.ToList()
+					assembly.GetTypes()
+						.Where(a => typeof(ISubscriber<E>).IsAssignableFrom(a) && !a.IsAbstract).ToList()
 						.ForEach((subscriberType) =>
 						{
 							var subscriber = (ISubscriber<E>)this.Creator.Create(subscriberType);
@@ -59,9 +57,7 @@ namespace EventBus.Implementation
 			}
 			catch (Exception ex)
 			{
-				this.Logger.Error(
-					string.Format("Error during assembly search for '{0}' subscribers",
-						typeof(E).Name), ex);
+				this.Logger.Error(string.Format("Error during assembly search for '{0}' subscribers", typeof(E).Name), ex);
 			}
 
 			return ret;
@@ -84,17 +80,13 @@ namespace EventBus.Implementation
 		{
 			try
 			{
-				Logger.DebugFormat("attempting to unsubscribe subscriber of type [{0}]", unsubscriber.GetType().FullName);
+				Logger.DebugFormat("Attempting to unsubscribe subscriber of type [{0}]", unsubscriber.GetType().FullName);
 				unsubscriber.Unsubscribe();
 			}
 			catch (Exception e)
 			{
-				Logger.Error(
-					String.Format(
-					"an exception was raised while unsubscribing subscriber of type [{0}]",
-					unsubscriber.GetType()),
-					e
-				);
+				Logger.Error(String.Format("Exception was raised while unsubscribing subscriber of type [{0}]",
+					unsubscriber.GetType()), e);
 			}
 		}
 
@@ -113,8 +105,7 @@ namespace EventBus.Implementation
 
 		public Subscribers Subscribe<E>()
 		{
-			string dbg = string.Format("Searching for ISubscriber implementations for '{0}'",
-					typeof(E).Name);
+			string dbg = string.Format("Searching for ISubscriber implementations for '{0}'", typeof(E).Name);
 
 			this.Logger.Debug(dbg);
 
@@ -138,11 +129,9 @@ namespace EventBus.Implementation
 				};
 			});
 
-			WireDriver.Stopping += (sender, e) => subs
-				.Where(sub => sub is IUnsubscribe)
-				.Cast<IUnsubscribe>()
-				.ToList()
-				.ForEach(Unsubscribe);
+			WireDriver.Stopping += (sender, e) => subs.Where(sub => sub is IUnsubscribe)
+														.Cast<IUnsubscribe>().ToList()
+														.ForEach(Unsubscribe);
 			return this;
 		}
 

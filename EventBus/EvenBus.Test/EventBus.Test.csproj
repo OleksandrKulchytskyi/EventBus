@@ -75,6 +75,7 @@
     <Compile Include="ConfigTest.cs" />
     <Compile Include="TestSubscriber.cs" />
     <Compile Include="MQUtilsTest.cs" />
+    <Compile Include="RabbitMQTest.cs" />
     <Compile Include="WireTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +86,10 @@
     <ProjectReference Include="..\EventBus.MessageQueue\EventBus.MessageQueue.csproj">
       <Project>{b1da8997-9669-4e13-bf07-7a0e1c1860c6}</Project>
       <Name>EventBus.MessageQueue</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj">
+      <Project>{31098c38-9a85-4209-a28e-cfe85765f23f}</Project>
+      <Name>EventBus.RabbitMQ</Name>
     </ProjectReference>
     <ProjectReference Include="..\EventBus\EventBus.csproj">
       <Project>{8d42e8a5-9858-4fb3-87a5-a878019e5eff}</Project>

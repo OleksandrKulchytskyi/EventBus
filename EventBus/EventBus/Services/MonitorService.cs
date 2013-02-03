@@ -10,12 +10,10 @@ namespace EventBus.Services
 	public class MonitorService : IMonitorService, IDisposable
 	{
 		public static ServiceHost DuplexHost { get; set; }
+		private static MonitorService Instance { get; set; }
 
 		private List<IMonitorClient> Clients { get; set; }
-
 		private List<ISubscriber> ActivatedSubscribers { get; set; }
-
-		private static MonitorService Instance { get; set; }
 
 		public MonitorService()
 		{
@@ -136,21 +134,17 @@ namespace EventBus.Services
 		{
 			var client = OperationContext.Current.GetCallbackChannel<IMonitorClient>();
 
-			DefaultSingleton<ICreator>.Instance.Create<ILog>().Info("Client " + request.ClientMachineName + " connected ");
-
+			DefaultSingleton<ICreator>.Instance.Create<ILog>().Info(string.Format("New client has been connected '{0}'", request.ClientMachineName));
 			this.Clients.Add(client);
 
-			client.OnClientConnected(new MonitorConnectResponse
-			{
-				Success = true
-			});
+			client.OnClientConnected(new MonitorConnectResponse { Success = true });
 		}
 
 		public void Disconnect(MonitorConnectRequest request)
 		{
 			var client = OperationContext.Current.GetCallbackChannel<IMonitorClient>();
 
-			DefaultSingleton<ICreator>.Instance.Create<ILog>().Info("Client " + request.ClientMachineName + " disconnected ");
+			DefaultSingleton<ICreator>.Instance.Create<ILog>().Info(string.Format("New client has been disconnected '{0}'", request.ClientMachineName));
 
 			this.Clients.Remove(client);
 		}

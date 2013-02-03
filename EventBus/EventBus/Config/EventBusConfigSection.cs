@@ -72,11 +72,11 @@ namespace EventBus.Config
 		private const string AssembliesProperty = "assemblies";
 
 		[ConfigurationProperty(AssembliesProperty, IsRequired = false)]
-		public GenericConfigurationCollection<AssemblyToWatchElement> Assemblies
+		public GenericConfigurationCollection<AssemblyElement> Assemblies
 		{
 			get
 			{
-				return (GenericConfigurationCollection<AssemblyToWatchElement>)base[AssembliesProperty];
+				return (GenericConfigurationCollection<AssemblyElement>)base[AssembliesProperty];
 			}
 		}
 	}
@@ -86,11 +86,11 @@ namespace EventBus.Config
 		private const string AssembliesProperty = "assemblies";
 
 		[ConfigurationProperty(AssembliesProperty, IsRequired = true)]
-		public GenericConfigurationCollection<AssemblyToWatchElement> Assemblies
+		public GenericConfigurationCollection<AssemblyElement> Assemblies
 		{
 			get
 			{
-				return (GenericConfigurationCollection<AssemblyToWatchElement>)base[AssembliesProperty];
+				return (GenericConfigurationCollection<AssemblyElement>)base[AssembliesProperty];
 			}
 		}
 
@@ -118,10 +118,9 @@ namespace EventBus.Config
 		}
 	}
 
-	public class AssemblyToWatchElement : ConfigurationElement
+	public class AssemblyElement : ConfigurationElement
 	{
 		private const string NameProperty = "assembly";
-
 		[ConfigurationProperty(NameProperty, IsRequired = true)]
 		public string Assembly
 		{

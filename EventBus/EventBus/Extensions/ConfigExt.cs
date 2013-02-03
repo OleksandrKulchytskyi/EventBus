@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace EventBus.Extensions
 {
-	public static class PublisherConfigurationExtensions
+	public static class PublisherConfigExtensions
 	{
 		public static Publishers FromConfiguration(this Publishers publishers)
 		{
@@ -15,7 +15,7 @@ namespace EventBus.Extensions
 			{
 				if (EventBusConfigSection.Current.Publishers != null)
 				{
-					EventBusConfigSection.Current.Publishers.Assemblies.Cast<AssemblyToWatchElement>().ToList()
+					EventBusConfigSection.Current.Publishers.Assemblies.Cast<AssemblyElement>().ToList()
 						.ForEach(element =>
 						{
 							publishers = publishers.WithAssembly(Assembly.Load(element.Assembly));
@@ -29,7 +29,7 @@ namespace EventBus.Extensions
 		}
 	}
 
-	public static class SubscriberConfigurationExtensions
+	public static class SubscriberConfigExtensions
 	{
 		public static Subscribers FromConfiguration(this Subscribers subscribers)
 		{
@@ -39,7 +39,7 @@ namespace EventBus.Extensions
 
 				if (EventBusConfigSection.Current.Subscribers != null)
 				{
-					EventBusConfigSection.Current.Subscribers.Assemblies.Cast<AssemblyToWatchElement>().ToList()
+					EventBusConfigSection.Current.Subscribers.Assemblies.Cast<AssemblyElement>().ToList()
 						.ForEach(element =>
 						{
 							subscribers = subscribers.WithAssembly(Assembly.Load(element.Assembly));
@@ -48,10 +48,8 @@ namespace EventBus.Extensions
 					EventBusConfigSection.Current.Subscribers.Events.Cast<EventTypeElement>().ToList()
 						.ForEach(element =>
 						{
-							typeof(Subscribers)
-								.GetMethod("Subscribe")
-									.MakeGenericMethod(Type.GetType(element.Name))
-										.Invoke(subscribers, new object[] { });
+							typeof(Subscribers).GetMethod("Subscribe")
+							.MakeGenericMethod(Type.GetType(element.Name)).Invoke(subscribers, new object[] { });
 						});
 				}
 			}

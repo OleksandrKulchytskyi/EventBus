@@ -36,8 +36,7 @@ namespace EventBus.Implementation
 			MonitorService.Start();
 
 			// load up all the subscribers
-			Subscribers.Current
-					.WithSubscriberActivatedAction(
+			Subscribers.Current.WithSubscriberActivatedAction(
 						new SubscriberActivatedHandler(
 							delegate(ISubscriber subscriber)
 							{

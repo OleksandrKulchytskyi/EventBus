@@ -33,19 +33,14 @@ namespace EventBus.Implementation
 
 			this.AssembliesToSearch.ForEach((assembly) =>
 			{
-				assembly
-					.GetTypes()
-					.Where(a => typeof(IPublisher<E>).IsAssignableFrom(a) && !a.IsAbstract)
-					.ToList()
+				assembly.GetTypes()
+					.Where(a => typeof(IPublisher<E>).IsAssignableFrom(a) && !a.IsAbstract).ToList()
 					.ForEach((pub) =>
 					{
 						var publisherInstance = this.CreateInstanceOfPublisher(pub);
 
-						pub.InvokeMember("Publish",
-							BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance,
-							null,
-							publisherInstance,
-							new object[] { eventToPublish });
+						pub.InvokeMember("Publish", BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance,
+							null, publisherInstance, new object[] { eventToPublish });
 					});
 			});
 

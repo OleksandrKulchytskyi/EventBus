@@ -26,7 +26,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 
 		public virtual string ExchangeName
 		{
-			get { return "NEvent"; }
+			get { return "EvetBus"; }
 		}
 
 		#region IConnectionDescriptor Members
