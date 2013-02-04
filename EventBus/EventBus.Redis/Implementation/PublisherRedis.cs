@@ -20,15 +20,23 @@ namespace EventBus.Redis.Implementation
 			else
 			{
 				_host = "localhost";
-				_port = 2928;
+				_port = 6379;
 			}
 		}
 
 		public void Publish(TEvnt data)
 		{
-			using(var redisPublisher =new ServiceStack.Redis.RedisClient(_host,_port))
+			using (var redisPublisher = new ServiceStack.Redis.RedisClient(_host, _port))
 			{
-				redisPublisher.PublishMessage(typeof(TEvnt).Name, data.SerializeToJSON());
+				try
+				{
+					redisPublisher.PublishMessage(typeof(TEvnt).Name, data.SerializeToJSON());
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine(ex.Message);
+					throw;
+				}
 			}
 		}
 	}

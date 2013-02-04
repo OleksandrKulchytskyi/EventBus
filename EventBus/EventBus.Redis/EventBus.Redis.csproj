@@ -52,6 +52,12 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\packages\Rx-Core.2.0.21114\lib\Net40\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\packages\Rx-Interfaces.2.0.21114\lib\Net40\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,6 +69,10 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Config\EventBusRedisConfigSercion.cs" />
+    <Compile Include="Extension\ClientManager.cs" />
+    <Compile Include="Extension\IUniqueLockable.cs" />
+    <Compile Include="Extension\ObjectContainer.cs" />
+    <Compile Include="Extension\RedisSubscriptions.cs" />
     <Compile Include="Extension\Utils.cs" />
     <Compile Include="Implementation\PublisherRedis.cs" />
     <Compile Include="Implementation\SubscriberRedis.cs" />

@@ -1,4 +1,5 @@
 ﻿using EventBus.Infrastructure;
+using EventBus.Redis.Extension;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace EventBus.Redis.Implementation
 		private int _subscribed = 0;
 		private readonly int _port;
 		private readonly string _host;
+		private int _MessageReceived = 0;
 
 		private RedisClient _redisConsumer = null;
 		private IRedisSubscription _redisSubscription = null;
@@ -28,7 +30,7 @@ namespace EventBus.Redis.Implementation
 			else
 			{
 				_host = "localhost";
-				_port = 2928;
+				_port = 6379;
 			}
 		}
 
@@ -59,19 +61,78 @@ namespace EventBus.Redis.Implementation
 			OnEventHandled(target);
 		}
 
+		public event EventHandler RedisSubscriptionSuccess;
+		protected virtual void OnRedisSubscriptionSuccess()
+		{
+			EventHandler eh = System.Threading.Interlocked.CompareExchange(ref RedisSubscriptionSuccess, null, null);
+			if (eh != null)
+			{
+				eh.Invoke(this, EventArgs.Empty);
+			}
+		}
+
 		public void Subscribe()
 		{
 			if (System.Threading.Interlocked.Exchange(ref _subscribed, 1) == 0)
 			{
-				_redisConsumer = new RedisClient(_host, _port);
-				_redisSubscription= _redisConsumer.CreateSubscription();
-				_redisSubscription.SubscribeToChannels(typeof(TEvnt).Name);
+				System.Threading.Tasks.Task.Factory.StartNew(() =>
+				{
+					try
+					{
+						_redisConsumer = new RedisClient(_host, _port);
+						_redisSubscription = _redisConsumer.CreateSubscription();
+
+						_redisSubscription.OnSubscribe = OnChannelSubscribe;
+						_redisSubscription.OnUnSubscribe = OnChannelUnsubscribe;
+						_redisSubscription.OnMessage = OnChannelMessage;
+
+						System.Diagnostics.Debug.WriteLine("Before calling SubscribeToChannels");
+
+						_redisSubscription.SubscribeToChannels(typeof(TEvnt).Name);
+						_redisSubscription.OnSubscribe = null;
+						_redisSubscription.OnUnSubscribe = null;
+						_redisSubscription.OnMessage = null;
+					}
+					catch (Exception ex)
+					{
+						System.Diagnostics.Debug.WriteLine(ex.Message);
+						if (_redisSubscription != null)
+							_redisSubscription.UnSubscribeFromAllChannels();
+
+						throw;
+					}
+				}, System.Threading.Tasks.TaskCreationOptions.LongRunning);
+			}
+		}
+
+		protected void OnChannelSubscribe(string channel)
+		{
+			OnRedisSubscriptionSuccess();
+		}
+
+		protected void OnChannelUnsubscribe(string channel)
+		{
+			System.Diagnostics.Debug.WriteLine("UnSubscribed from '{0}'", channel);
+		}
+
+		protected void OnChannelMessage(string channel, string msg)
+		{
+			if (channel.Equals(typeof(TEvnt).Name, StringComparison.OrdinalIgnoreCase))
+			{
+				var evnt = msg.DeserializeFromJSON<TEvnt>();
+				System.Threading.Interlocked.Increment(ref _MessageReceived);
+				OnEventReceived(evnt);
 			}
 		}
 
 		public Type GetEventType()
 		{
 			return typeof(TEvnt);
+		}
+
+		public int GetTotalReceivedMsgs
+		{
+			get { return _MessageReceived; }
 		}
 
 		public void Unsubscribe()
@@ -93,9 +154,9 @@ namespace EventBus.Redis.Implementation
 				{
 					var client = System.Threading.Interlocked.CompareExchange<RedisClient>(ref _redisConsumer, null, null);
 					var subs = System.Threading.Interlocked.CompareExchange<IRedisSubscription>(ref _redisSubscription, null, null);
-					if(client!=null && subs!=null)
+					if (client != null && subs != null)
 					{
-						subs.UnSubscribeFromAllChannels();
+						subs.UnSubscribeFromChannels(typeof(TEvnt).Name);
 						subs.Dispose();
 						client.Dispose();
 						subs = null; client = null;

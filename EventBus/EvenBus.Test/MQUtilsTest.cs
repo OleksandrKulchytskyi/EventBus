@@ -45,19 +45,21 @@ namespace EvenBus.Test
 			publisher.IsTransactional = false;
 			publisher.Publish(new TestEvent() { Data = "Hello from mq", Processed = false });
 
-			var subscriber = new SubscriberMQ<TestEvent>();
-			subscriber.QueuePath = ".\\Private$\\EventBusMQ";
-
-			if (subscriber != null)
+			using (var subscriber = new SubscriberMQ<TestEvent>())
 			{
-				subscriber.EventReceived += data_EventReceived;
-				subscriber.EventHandled += data_EventHandled;
-				subscriber.Subscribe();
-			}
+				subscriber.QueuePath = ".\\Private$\\EventBusMQ";
 
-			if (!mre.WaitOne(TimeSpan.FromSeconds(40)))
-			{
-				Assert.Fail("Timeout");
+				if (subscriber != null)
+				{
+					subscriber.EventReceived += data_EventReceived;
+					subscriber.EventHandled += data_EventHandled;
+					subscriber.Subscribe();
+				}
+
+				if (!mre.WaitOne(TimeSpan.FromSeconds(40)))
+				{
+					Assert.Fail("Timeout");
+				}
 			}
 		}
 
