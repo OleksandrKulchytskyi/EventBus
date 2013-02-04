@@ -54,7 +54,7 @@ namespace EventBus.MessageQueue.Infrastructure
 				this.EventHandled(this, new BusEventArgs<TEvnt>(target));
 		}
 
-		public virtual void Handle(TEvnt target)
+		public virtual void HandleEvent(TEvnt target)
 		{
 			OnEventHandled(target);
 		}

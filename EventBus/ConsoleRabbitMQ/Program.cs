@@ -18,6 +18,8 @@ namespace ConsoleRabbitMQ
 
 				Console.ReadLine();
 			}
+
+			System.Threading.Thread.Sleep(3550);
 		}
 	}
 }

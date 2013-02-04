@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.RabbitMQ", "EventB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleRabbitMQ", "ConsoleRabbitMQ\ConsoleRabbitMQ.csproj", "{617AC9C1-BB79-4623-8ADD-93E3A2C977B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleMemoryHost", "ConsoleMemoryHost\ConsoleMemoryHost.csproj", "{C8B76DF1-D462-47D8-AEB9-34738ADF0D2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{617AC9C1-BB79-4623-8ADD-93E3A2C977B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{617AC9C1-BB79-4623-8ADD-93E3A2C977B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{617AC9C1-BB79-4623-8ADD-93E3A2C977B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8B76DF1-D462-47D8-AEB9-34738ADF0D2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8B76DF1-D462-47D8-AEB9-34738ADF0D2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8B76DF1-D462-47D8-AEB9-34738ADF0D2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8B76DF1-D462-47D8-AEB9-34738ADF0D2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

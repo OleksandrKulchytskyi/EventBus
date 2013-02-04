@@ -7,26 +7,33 @@ namespace EvenBus.Test
 	[TestClass]
 	public class WireTest
 	{
+		bool invoked = false;
 		[TestMethod]
 		public void BusDriverRaisesEventOnStop()
 		{
-			bool invoked = false;
-			WireDriver.Stopping += (s, a) => invoked = true;
+			WireDriver.Stopping += WireDriver_Stopping;
 			WireDriver.Start();
 			Assert.IsFalse(invoked);
 			WireDriver.Stop();
+			WireDriver.Stopping -= WireDriver_Stopping;
+
 			Assert.IsTrue(invoked);
+		}
+
+		void WireDriver_Stopping(object sender, EventArgs e)
+		{
+			invoked = true;
 		}
 
 		[TestMethod]
 		public void BusDriverRaisesEventOnDispose()
 		{
-			bool invoked = false;
-			WireDriver.Stopping += (s, a) => invoked = true;
+			WireDriver.Stopping += WireDriver_Stopping;
 			using (WireDriver.Start())
 			{
 				Assert.IsFalse(invoked);
 			}
+			WireDriver.Stopping -= WireDriver_Stopping;
 			Assert.IsTrue(invoked);
 		}
 	}

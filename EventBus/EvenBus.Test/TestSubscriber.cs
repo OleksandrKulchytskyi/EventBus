@@ -11,6 +11,8 @@ namespace EvenBus.Test
 	{
 		public class ConcreteSubscriberUns : ISubscriber<TestEvent>, IUnsubscribe
 		{
+			internal static bool UnsubscribeCalled = false;
+
 			public void Subscribe()
 			{
 			}
@@ -21,16 +23,15 @@ namespace EvenBus.Test
 			}
 
 			public event EventHandler<BusEventArgs<TestEvent>> EventHandled;
-			public void Handle(TestEvent target)
+
+			public void HandleEvent(TestEvent target)
 			{
 			}
 
 			public void Unsubscribe()
 			{
-				Called = true;
+				UnsubscribeCalled = true;
 			}
-
-			internal static bool Called = false;
 
 			public event EventHandler<BusEventArgs<TestEvent>> EventReceived;
 		}
@@ -41,10 +42,10 @@ namespace EvenBus.Test
 			Subscribers.Current.AssembliesToSearch.Add(Assembly.GetExecutingAssembly());
 			WireDriver.Start();
 
-			Assert.IsFalse(ConcreteSubscriberUns.Called);
+			Assert.IsFalse(ConcreteSubscriberUns.UnsubscribeCalled);
 
 			WireDriver.Stop();
-			Assert.IsTrue(ConcreteSubscriberUns.Called);
+			Assert.IsTrue(ConcreteSubscriberUns.UnsubscribeCalled);
 		}
 
 		[TestMethod]
@@ -53,9 +54,9 @@ namespace EvenBus.Test
 			Subscribers.Current.AssembliesToSearch.Add(Assembly.GetExecutingAssembly());
 			using (WireDriver.Start())
 			{
-				Assert.IsFalse(ConcreteSubscriberUns.Called);
+				Assert.IsFalse(ConcreteSubscriberUns.UnsubscribeCalled);
 			}
-			Assert.IsTrue(ConcreteSubscriberUns.Called);
+			Assert.IsTrue(ConcreteSubscriberUns.UnsubscribeCalled);
 		}
 	}
 }

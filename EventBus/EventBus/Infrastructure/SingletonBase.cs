@@ -8,14 +8,12 @@ namespace EventBus.Infrastructure
 		{
 			// Get non-public constructors for T.
 			var ctors = typeof(T).GetConstructors(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-
 			if (!Array.Exists(ctors, (ci) => ci.GetParameters().Length == 0))
 				throw new InvalidOperationException("Non-public ctor() was not found.");
 
 			var ctor = Array.Find(ctors, (ci) => ci.GetParameters().Length == 0);
 
-			// Invoke constructor and return resulting object.
-			return ctor.Invoke(new object[] { }) as T;
+			return ctor.Invoke(new object[] { }) as T;// Invoke constructor and return resulting object.
 		}, System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
 
 		public static T Instance

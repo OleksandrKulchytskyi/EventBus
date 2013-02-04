@@ -3,16 +3,21 @@ using System.Collections.Generic;
 
 namespace EventBus.Hosting
 {
-	public class MemoryPublisher<T> : IPublisher<T>
+	public class MemoryPublisher<TEvnt> : IPublisher<TEvnt>
 	{
+		private readonly int _Limit = 100;
+
 		public MemoryPublisher()
 		{
-			DefaultSingleton<Queue<T>>.Instance = DefaultSingleton<Queue<T>>.Instance ?? new Queue<T>();
+			DefaultSingleton<Queue<TEvnt>>.Instance = DefaultSingleton<Queue<TEvnt>>.Instance ?? new Queue<TEvnt>();
 		}
 
-		public virtual void Publish(T data)
+		public virtual void Publish(TEvnt data)
 		{
-			DefaultSingleton<Queue<T>>.Instance.Enqueue(data);
+			if (DefaultSingleton<Queue<TEvnt>>.Instance.Count > _Limit)
+				DefaultSingleton<Queue<TEvnt>>.Instance.Dequeue();
+
+			DefaultSingleton<Queue<TEvnt>>.Instance.Enqueue(data);
 		}
 	}
 }

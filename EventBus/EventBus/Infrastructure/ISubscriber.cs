@@ -9,21 +9,21 @@ namespace EventBus.Infrastructure
 		Type GetEventType();
 	}
 
-	public interface ISubscriber<TData> : ISubscriber
+	public interface ISubscriber<TMsg> : ISubscriber
 	{
-		event EventHandler<BusEventArgs<TData>> EventReceived;
+		event EventHandler<BusEventArgs<TMsg>> EventReceived;
 
-		event EventHandler<BusEventArgs<TData>> EventHandled;
+		event EventHandler<BusEventArgs<TMsg>> EventHandled;
 
-		void Handle(TData target);
+		void HandleEvent(TMsg target);
 	}
 
 	[Serializable]
-	public class BusEventArgs<T> : EventArgs
+	public class BusEventArgs<TMsg> : EventArgs
 	{
-		public T Data { get; private set; }
+		public TMsg Data { get; private set; }
 
-		public BusEventArgs(T eventData)
+		public BusEventArgs(TMsg eventData)
 		{
 			this.Data = eventData;
 		}
