@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using EventBus.Infrastructure;
 using EventBus.Redis.Implementation;
-using EventBus.Infrastructure;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Threading;
 
 namespace EvenBus.Test
@@ -9,12 +9,13 @@ namespace EvenBus.Test
 	[TestClass]
 	public class EventRedisTest
 	{
-		bool RedisSubscribed = false;
-		bool Handled = false;
-		bool Received = false;
-		ManualResetEvent mre = null;
-		CountdownEvent countEvent = null;
+		private bool RedisSubscribed = false;
+		private bool Handled = false;
+		private bool Received = false;
+		private ManualResetEvent mre = null;
+		private CountdownEvent countEvent = null;
 
+		#region init
 		[TestInitialize]
 		public void Init()
 		{
@@ -33,9 +34,11 @@ namespace EvenBus.Test
 			}
 			if (countEvent != null)
 				countEvent.Dispose();
-		}
+		} 
+		#endregion
 
 		#region Test1
+
 		[TestMethod]
 		public void RedisTest()
 		{
@@ -51,6 +54,8 @@ namespace EvenBus.Test
 
 			if (!mre.WaitOne(TimeSpan.FromSeconds(10)))
 				Assert.Fail();
+			else
+				Assert.IsTrue(RedisSubscribed);
 
 			mre.Reset();
 
@@ -62,24 +67,25 @@ namespace EvenBus.Test
 			(subs as IUnsubscribe).Unsubscribe();
 		}
 
-		void subs_EventHandled(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
+		private void subs_RedisSubscriptionSuccess(object sender, EventArgs e)
+		{
+			RedisSubscribed = true;
+			mre.Set();
+		}
+
+		private void subs_EventHandled(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
 		{
 			Handled = true;
 		}
 
-		void subs_EventReceived(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
+		private void subs_EventReceived(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
 		{
 			Received = true;
 			mre.Set();
 			(sender as ISubscriber<TestEvent>).HandleEvent(e.Data);
 		}
 
-		void subs_RedisSubscriptionSuccess(object sender, EventArgs e)
-		{
-			RedisSubscribed = true;
-			mre.Set();
-		}
-		#endregion
+		#endregion Test1
 
 		[TestMethod]
 		public void RedisCountMsgsTest()
@@ -118,18 +124,18 @@ namespace EvenBus.Test
 			}
 		}
 
-		void subs_RedisSubscriptionSuccess2(object sender, EventArgs e)
+		private void subs_RedisSubscriptionSuccess2(object sender, EventArgs e)
 		{
 			RedisSubscribed = true;
 			mre.Set();
 		}
 
-		void subs_EventHandled2(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
+		private void subs_EventHandled2(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
 		{
 			System.Diagnostics.Debug.WriteLine("New message handled");
 		}
 
-		void subs_EventReceived2(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
+		private void subs_EventReceived2(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
 		{
 			countEvent.Signal();
 			System.Diagnostics.Debug.WriteLine(string.Format("New message received {0}", e.Data.Data));

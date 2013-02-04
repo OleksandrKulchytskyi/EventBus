@@ -2,9 +2,6 @@
 using EventBus.Redis.Extension;
 using ServiceStack.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace EventBus.Redis.Implementation
 {
@@ -62,6 +59,7 @@ namespace EventBus.Redis.Implementation
 		}
 
 		public event EventHandler RedisSubscriptionSuccess;
+
 		protected virtual void OnRedisSubscriptionSuccess()
 		{
 			EventHandler eh = System.Threading.Interlocked.CompareExchange(ref RedisSubscriptionSuccess, null, null);

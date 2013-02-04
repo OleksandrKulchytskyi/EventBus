@@ -1,15 +1,12 @@
-﻿using EventBus.Implementation;
-using EventBus.Extensions;
+﻿using EventBus.Extensions;
+using EventBus.Implementation;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ConsoleRabbitMQ
 {
-	class Program
+	internal class Program
 	{
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			using (WireDriver.Start())
 			{

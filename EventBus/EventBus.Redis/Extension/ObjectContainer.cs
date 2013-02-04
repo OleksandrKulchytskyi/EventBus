@@ -2,23 +2,21 @@
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace EventBus.Redis.Extension
 {
-
-
 	public abstract class RobustObjectsContainer<ObjectType, DerrivingType> : SingletonBase<DerrivingType>
 		where ObjectType : class, IUniqueLockable, new()
 		where DerrivingType : class
 	{
-		readonly ReaderWriterLockSlim _ObjectsLocker = new ReaderWriterLockSlim();
-		IDictionary<string, ObjectType> _Objects = new Dictionary<string, ObjectType>();
+		private readonly ReaderWriterLockSlim _ObjectsLocker = new ReaderWriterLockSlim();
+		private IDictionary<string, ObjectType> _Objects = new Dictionary<string, ObjectType>();
 		public readonly string TypeName;
+
 		public bool AutoLoadNewObjects { get; set; }
+
 		private RedisListener Listener;
 
 		public class ObjectEventArgs : EventArgs
@@ -28,12 +26,16 @@ namespace EventBus.Redis.Extension
 				ObjectKey = key;
 				ObjectId = int.Parse(key.Remove(0, key.IndexOf(':') + 1));
 			}
+
 			public string ObjectKey { get; set; }
+
 			public long ObjectId { get; set; }
 		}
 
 		public event EventHandler<ObjectEventArgs> OnAdded;
+
 		public event EventHandler<ObjectEventArgs> OnChanged;
+
 		public event EventHandler<ObjectEventArgs> OnDeleted;
 
 		private void OnAddedHandler(object sender, ObjectEventArgs args)
@@ -67,7 +69,6 @@ namespace EventBus.Redis.Extension
 			OnChanged += new EventHandler<ObjectEventArgs>(OnChangedHandler);
 			OnDeleted += new EventHandler<ObjectEventArgs>(OnDeletedHandler);
 			Listener = new RedisListener(this);
-
 		}
 
 		public void Start()
@@ -118,6 +119,7 @@ namespace EventBus.Redis.Extension
 				{
 					return _Objects[key];
 				}
+
 				//Checking cache
 				return PullFromServer(key);
 			}
@@ -146,6 +148,7 @@ namespace EventBus.Redis.Extension
 			string key = TypeName + ":" + value.Id;
 			if (Get(value.Id) == null)
 			{
+				//TODO: insert logger messages here
 				//Logger.Instance.Error("Object ({0}) not found! use Add() instead", key);
 				return;
 			}
@@ -216,6 +219,7 @@ namespace EventBus.Redis.Extension
 			}
 		}
 
+		//TODO: inject error handling here
 		public ObjectType GetAndLock(long objectId)//, //ref GSEngineErrorCodes errorCode)
 		{
 			string key = TypeName + ":" + objectId;
@@ -226,6 +230,7 @@ namespace EventBus.Redis.Extension
 				{
 					return PullFromServer(key);
 				}
+
 				//errorCode = GSEngineErrorCodes.SessionIsBusy;
 				return null;
 			}
@@ -245,6 +250,7 @@ namespace EventBus.Redis.Extension
 			private const string Heartbeat = "Server/Heartbeat";
 			private bool Closing = false;
 			private IRedisSubscription Subscription;
+
 			public RedisListener(RobustObjectsContainer<ObjectType, DerrivingType> parent)
 			{
 				Parent = parent;
@@ -272,8 +278,8 @@ namespace EventBus.Redis.Extension
 					Closing = true;
 					client.PublishMessage(Heartbeat, Heartbeat);
 				}
-
 			}
+
 			private void OnMessage(string channel, string message)
 			{
 				if (Closing)
@@ -300,6 +306,7 @@ namespace EventBus.Redis.Extension
 				}
 				else
 				{
+					//TODO: Inject logger here
 					//Logger.Instance.Error("Missing handler for redis channel " + channel);
 				}
 			}
@@ -330,5 +337,4 @@ namespace EventBus.Redis.Extension
 			}
 		}
 	}
-
 }

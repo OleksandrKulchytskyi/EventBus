@@ -1,28 +1,23 @@
-﻿using System;
+﻿using ServiceStack.Text;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using ServiceStack.Text;
-using ServiceStack.Redis;
-using System.Reactive.Linq;
 
 namespace EventBus.Redis.Extension
 {
 	public class RedisSubscription<T> : IDisposable, IObservable<T>
 	{
-		ServiceStack.Redis.RedisClient redis;
-		ServiceStack.Redis.IRedisSubscription subscription;
-		System.Threading.Thread worker;
-		SynchronizationContext workerSyncContext;
-		string _channelName;
+		private ServiceStack.Redis.RedisClient redis;
+		private ServiceStack.Redis.IRedisSubscription subscription;
+		private System.Threading.Thread worker;
+		private SynchronizationContext workerSyncContext;
+		private string _channelName;
 
-		List<IObserver<T>> observers = new List<IObserver<T>>();
-		List<IDisposable> observerSubDisposables = new List<IDisposable>();
+		private List<IObserver<T>> observers = new List<IObserver<T>>();
+		private List<IDisposable> observerSubDisposables = new List<IDisposable>();
 
-		bool isDisposed = false;
-		bool isSubscribed = false;
+		private bool isDisposed = false;
+		private bool isSubscribed = false;
 
 		public RedisSubscription(string channelName)
 		{
@@ -33,8 +28,9 @@ namespace EventBus.Redis.Extension
 				try
 				{
 					workerSyncContext = new SynchronizationContext();
+					redis = ServiceStack.Redis.RedisClientFactory.Instance.CreateRedisClient("localhost", 6379);
 
-					redis = RedisManager.GetClient();
+					//redis = RedisManager.GetClient();
 					subscription = redis.CreateSubscription();
 
 					subscription.OnMessage = (channel, msg) =>
@@ -64,7 +60,6 @@ namespace EventBus.Redis.Extension
 						}
 						finally
 						{
-
 						}
 					};
 
@@ -170,7 +165,7 @@ namespace EventBus.Redis.Extension
 	/// </summary>
 	public class ActionDisposable : IDisposable
 	{
-		Action process;
+		private Action process;
 
 		public ActionDisposable(Action _process)
 		{
@@ -193,7 +188,8 @@ namespace EventBus.Redis.Extension
 	{
 		public static bool PushMessage<T>(T message, string channelName)
 		{
-			using (var redis = RedisManager.GetClient())
+			//using (var redis = RedisManager.GetClient())
+			using (var redis = ServiceStack.Redis.RedisClientFactory.Instance.CreateRedisClient("localhost", 6379))
 			{
 				return redis.PublishMessage(channelName, message.ToJson<T>()) > 0;
 			}

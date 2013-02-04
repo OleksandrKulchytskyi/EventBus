@@ -16,7 +16,9 @@ namespace EventBus.RabbitMQ.Infrastructure
 		private IConnection _connection;
 		private QueueingBasicConsumer _consumer;
 		private IModel _model;
+
 		private delegate object DequeueMethod();
+
 		private readonly CancellationTokenSource _cts;
 
 		public SubscriberRMQ()
