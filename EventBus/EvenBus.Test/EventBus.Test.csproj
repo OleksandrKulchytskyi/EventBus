@@ -53,6 +53,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Messaging" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -76,6 +77,7 @@
     <Compile Include="TestSubscriber.cs" />
     <Compile Include="MQUtilsTest.cs" />
     <Compile Include="RabbitMQTest.cs" />
+    <Compile Include="EventRedisTest.cs" />
     <Compile Include="WireTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +92,10 @@
     <ProjectReference Include="..\EventBus.RabbitMQ\EventBus.RabbitMQ.csproj">
       <Project>{31098c38-9a85-4209-a28e-cfe85765f23f}</Project>
       <Name>EventBus.RabbitMQ</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EventBus.Redis\EventBus.Redis.csproj">
+      <Project>{057f8771-e215-4587-bf18-193efc52857f}</Project>
+      <Name>EventBus.Redis</Name>
     </ProjectReference>
     <ProjectReference Include="..\EventBus\EventBus.csproj">
       <Project>{8d42e8a5-9858-4fb3-87a5-a878019e5eff}</Project>

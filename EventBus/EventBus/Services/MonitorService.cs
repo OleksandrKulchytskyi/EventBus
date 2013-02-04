@@ -14,6 +14,7 @@ namespace EventBus.Services
 
 		private List<IMonitorClient> Clients { get; set; }
 		private List<ISubscriber> ActivatedSubscribers { get; set; }
+		private int _disposed = 0;
 
 		public MonitorService()
 		{
@@ -28,16 +29,12 @@ namespace EventBus.Services
 				DefaultSingleton<ICreator>.Instance.Create<ILog>().Info("Starting monitor server");
 				MonitorService.Instance = new MonitorService();
 
-				MonitorService.DuplexHost =
-					new ServiceHost(MonitorService.Instance);
+				MonitorService.DuplexHost = new ServiceHost(MonitorService.Instance);
 
 				var binding = new NetTcpBinding { ReceiveTimeout = TimeSpan.FromMinutes(30) };
-
 				var address = string.Format("net.tcp://{0}:1234/NEventMonitor", Environment.MachineName);
 
-				MonitorService.DuplexHost.AddServiceEndpoint(typeof(IMonitorService),
-					binding,
-					address);
+				MonitorService.DuplexHost.AddServiceEndpoint(typeof(IMonitorService), binding, address);
 
 				DefaultSingleton<ICreator>.Instance.Create<ILog>().Info("Started monitor server");
 				DefaultSingleton<ICreator>.Instance.Create<ILog>().Info("Opening duplex host for monitor server");
@@ -50,6 +47,29 @@ namespace EventBus.Services
 			{
 				DefaultSingleton<ICreator>.Instance.Create<ILog>().Error("Error occurrred monitor server", x);
 			}
+		}
+
+		public static void Stop()
+		{
+			try
+			{
+				if (MonitorService.DuplexHost != null &&
+					(MonitorService.DuplexHost.State != CommunicationState.Closed &&
+					MonitorService.DuplexHost.State != CommunicationState.Closing &&
+					MonitorService.DuplexHost.State != CommunicationState.Faulted))
+				{
+					MonitorService.DuplexHost.Close();
+				}
+			}
+			catch (Exception)
+			{
+				try
+				{
+					MonitorService.DuplexHost.Abort();
+				}
+				catch { }
+			}
+
 		}
 
 		internal static void MonitorAlertSubscriberActivated(ISubscriber subscriber)
@@ -167,8 +187,27 @@ namespace EventBus.Services
 
 		public void Dispose()
 		{
-			if (MonitorService.DuplexHost != null && MonitorService.DuplexHost.State != CommunicationState.Closed)
-				MonitorService.DuplexHost.Close();
+			if (System.Threading.Interlocked.Exchange(ref _disposed, 1) == 1)
+				return;
+			try
+			{
+				if (MonitorService.DuplexHost != null && (MonitorService.DuplexHost.State != CommunicationState.Closed &&
+					MonitorService.DuplexHost.State != CommunicationState.Closing && MonitorService.DuplexHost.State != CommunicationState.Faulted))
+				{
+					MonitorService.DuplexHost.Close();
+					this.ActivatedSubscribers.Clear();
+					this.Clients.Clear();
+					GC.Collect();
+				}
+			}
+			catch (Exception)
+			{
+				try
+				{
+					MonitorService.DuplexHost.Abort();
+				}
+				catch { }
+			}
 		}
 	}
 }

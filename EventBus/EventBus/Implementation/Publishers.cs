@@ -26,18 +26,17 @@ namespace EventBus.Implementation
 			this.Creator = new DefaultCreator();
 		}
 
-		public Publishers Publish<E>(E eventToPublish)
+		public Publishers Publish<TEvnt>(TEvnt eventToPublish)
 		{
 			if (this.AssembliesToSearch.Count == 0)
 				this.WithAssembly<Publishers>();
 
 			this.AssembliesToSearch.ForEach((assembly) =>
 			{
-				assembly.GetTypes()
-					.Where(a => typeof(IPublisher<E>).IsAssignableFrom(a) && !a.IsAbstract).ToList()
+				assembly.GetTypes().Where(a => typeof(IPublisher<TEvnt>).IsAssignableFrom(a) && !a.IsAbstract).ToList()
 					.ForEach((pub) =>
 					{
-						var publisherInstance = this.CreateInstanceOfPublisher(pub);
+						var publisherInstance = this.GetOrCreatePublisherInstance(pub);
 
 						pub.InvokeMember("Publish", BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Instance,
 							null, publisherInstance, new object[] { eventToPublish });
@@ -47,7 +46,7 @@ namespace EventBus.Implementation
 			return this;
 		}
 
-		private object CreateInstanceOfPublisher(Type publisherType)
+		private object GetOrCreatePublisherInstance(Type publisherType)
 		{
 			return this.Creator.Create(publisherType);
 		}

@@ -11,6 +11,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 {
 	public class SubscriberRMQ<TEvnt> : ISubscriber<TEvnt>, IUnsubscribe, IConnectionInfo
 	{
+		private bool _HandleOnReceive = false;
 		protected readonly ILog Log;
 		private IConnection _connection;
 		private QueueingBasicConsumer _consumer;
@@ -27,6 +28,8 @@ namespace EventBus.RabbitMQ.Infrastructure
 		{
 			Log = log;
 			_cts = new CancellationTokenSource();
+			if (Config.ReceiverRMQConfigSection.IsConfigured)
+				_HandleOnReceive = Config.ReceiverRMQConfigSection.Current.HandleOnReceive;
 		}
 
 		public virtual string RoutingKey
@@ -69,9 +72,27 @@ namespace EventBus.RabbitMQ.Infrastructure
 
 		public event EventHandler<BusEventArgs<TEvnt>> EventReceived;
 
+		protected virtual void OnEventReceived(TEvnt message)
+		{
+			var ev = EventReceived;
+			if (null != ev)
+			{
+				ev(this, new BusEventArgs<TEvnt>(message));
+			}
+		}
+
 		public event EventHandler<BusEventArgs<TEvnt>> EventHandled;
 
-		public virtual void Handle(TEvnt target)
+		protected virtual void OnEventHandled(TEvnt message)
+		{
+			var ev = EventHandled;
+			if (null != ev)
+			{
+				ev(this, new BusEventArgs<TEvnt>(message));
+			}
+		}
+
+		public virtual void HandleEvent(TEvnt target)
 		{
 			OnEventHandled(target);
 		}
@@ -108,24 +129,6 @@ namespace EventBus.RabbitMQ.Infrastructure
 		}
 
 		#endregion IUnsubscriber Members
-
-		protected virtual void OnEventHandled(TEvnt message)
-		{
-			var ev = EventHandled;
-			if (null != ev)
-			{
-				ev(this, new BusEventArgs<TEvnt>(message));
-			}
-		}
-
-		protected virtual void OnEventReceived(TEvnt message)
-		{
-			var ev = EventReceived;
-			if (null != ev)
-			{
-				ev(this, new BusEventArgs<TEvnt>(message));
-			}
-		}
 
 		private string DeclareAndBindQueue()
 		{
@@ -195,10 +198,10 @@ namespace EventBus.RabbitMQ.Infrastructure
 		private void InvokeAsyncDequeue()
 		{
 			DequeueMethod dq = _consumer.Queue.Dequeue;
-			System.Threading.Tasks.Task.Factory.FromAsync(dq.BeginInvoke, OnDequeueMessage, dq);
+			System.Threading.Tasks.Task.Factory.FromAsync(dq.BeginInvoke, OnMessageDequed, dq);
 		}
 
-		private void OnDequeueMessage(IAsyncResult ar)
+		private void OnMessageDequed(IAsyncResult ar)
 		{
 			BasicDeliverEventArgs message = null;
 			try
@@ -225,11 +228,11 @@ namespace EventBus.RabbitMQ.Infrastructure
 				return;
 			}
 
-			if (message != null)
+			if (message != null && _HandleOnReceive)
 			{
 				try
 				{
-					HandleMessage(message);
+					HandleData(message);
 				}
 				catch (Exception e)
 				{
@@ -240,10 +243,10 @@ namespace EventBus.RabbitMQ.Infrastructure
 			InvokeAsyncDequeue();
 		}
 
-		private void HandleMessage(BasicDeliverEventArgs message)
+		private void HandleData(BasicDeliverEventArgs message)
 		{
 			TEvnt e = message.Body.Deserialize<TEvnt>();
-			Handle(e);
+			HandleEvent(e);
 		}
 	}
 }

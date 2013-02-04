@@ -67,11 +67,11 @@ namespace EvenBus.Test
 
 	public class EventSubscriberConcrete : MemorySubscriber<TestEvent>
 	{
-		public override void Handle(TestEvent target)
+		public override void HandleEvent(TestEvent target)
 		{
 			Console.WriteLine("Handling TestEvent '{0}'", target.Data);
 			target.Processed = true;
-			base.Handle(target);
+			base.HandleEvent(target);
 		}
 	}
 }

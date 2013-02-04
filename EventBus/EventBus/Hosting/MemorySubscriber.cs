@@ -14,7 +14,8 @@ namespace EventBus.Hosting
 
 		public MemorySubscriber()
 		{
-			this.Logger = DefaultSingleton<ICreator>.Instance.Create<ILog>();
+			if (DefaultSingleton<ICreator>.Instance != null)
+				this.Logger = DefaultSingleton<ICreator>.Instance.Create<ILog>();
 			DefaultSingleton<Queue<TEvnt>>.Instance = DefaultSingleton<Queue<TEvnt>>.Instance ?? new Queue<TEvnt>();
 		}
 
@@ -40,7 +41,7 @@ namespace EventBus.Hosting
 				this.EventHandled(this, new BusEventArgs<TEvnt>(target));
 		}
 
-		public virtual void Handle(TEvnt target)
+		public virtual void HandleEvent(TEvnt target)
 		{
 			OnEventHandled(target);
 		}
@@ -50,7 +51,7 @@ namespace EventBus.Hosting
 			if (this.Logger != null)
 				this.Logger.Debug(string.Format("Subscribing to event '{0}' with MemorySubscriber '{1}'", typeof(TEvnt).Name, this.GetType().Name));
 
-			this.Timer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
+			this.Timer = new Timer(TimeSpan.FromMilliseconds(500).TotalMilliseconds);
 			this.Timer.Elapsed += new ElapsedEventHandler(OnElapsed);
 			this.Timer.Start();
 		}
@@ -60,7 +61,8 @@ namespace EventBus.Hosting
 			if (DefaultSingleton<Queue<TEvnt>>.Instance.Any())
 			{
 				var item = DefaultSingleton<Queue<TEvnt>>.Instance.Dequeue();
-				this.Handle(item);
+				//var item = DefaultSingleton<Queue<TEvnt>>.Instance.Peek();
+				this.HandleEvent(item);
 			}
 		}
 

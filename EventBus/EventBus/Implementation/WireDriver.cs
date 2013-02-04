@@ -18,7 +18,14 @@ namespace EventBus.Implementation
 
 		public static event EventHandler Stopping;
 
+
 		public static void Stop()
+		{
+			OnStopping();
+			MonitorService.Stop();
+		}
+
+		static void OnStopping()
 		{
 			var ev = Stopping;
 
@@ -36,26 +43,21 @@ namespace EventBus.Implementation
 			MonitorService.Start();
 
 			// load up all the subscribers
-			Subscribers.Current.WithSubscriberActivatedAction(
-						new SubscriberActivatedHandler(
+			Subscribers.Current.WithSubscriberActivatedAction(new SubscriberActivatedHandler(
 							delegate(ISubscriber subscriber)
 							{
 								MonitorService.MonitorAlertSubscriberActivated(subscriber);
 
-								DefaultSingleton<ICreator>.Instance.Create<ILog>()
-									.Debug(string.Format("Activated '{0}' to handle '{1}'",
-										subscriber.GetEventType().Name,
-										subscriber.GetType().Name));
+								DefaultSingleton<ICreator>.Instance.Create<ILog>().Debug(string.Format("Activated '{0}' to handle '{1}'",
+										subscriber.GetEventType().Name, subscriber.GetType().Name));
 							}))
 					.WithSubscriberStartedAction(new SubscriberStartedExecutionHandler(
 							delegate(ISubscriber subscriber, object target)
 							{
 								MonitorService.MonitorAlertSubscriberStarted(subscriber);
 
-								DefaultSingleton<ICreator>.Instance.Create<ILog>()
-									.Debug(string.Format("Started handling '{0}' with '{1}'",
-										subscriber.GetEventType().Name,
-										subscriber.GetType().Name));
+								DefaultSingleton<ICreator>.Instance.Create<ILog>().Debug(string.Format("Started handling '{0}' with '{1}'",
+										subscriber.GetEventType().Name, subscriber.GetType().Name));
 							}))
 					.WithSubscriberCompletedAction(
 						new SubscriberCompletedExecutionHandler(
@@ -63,10 +65,8 @@ namespace EventBus.Implementation
 							{
 								MonitorService.MonitorAlertSubscriberCompleted(subscriber);
 
-								DefaultSingleton<ICreator>.Instance.Create<ILog>()
-									.Debug(string.Format("Completed handling of '{0}' with '{1}'",
-										subscriber.GetEventType().Name,
-										subscriber.GetType().Name));
+								DefaultSingleton<ICreator>.Instance.Create<ILog>().Debug(string.Format("Completed handling of '{0}' with '{1}'",
+										subscriber.GetEventType().Name, subscriber.GetType().Name));
 							}))
 					.WithSubscriberExceptionHandler(
 						new SubscriberExecutionExceptionHandler(
@@ -74,10 +74,8 @@ namespace EventBus.Implementation
 							{
 								MonitorService.MonitorAlertSubscriberException(subscriber);
 
-								DefaultSingleton<ICreator>.Instance.Create<ILog>()
-									.Error(string.Format("Error handling '{0}' with '{1}'",
-										subscriber.GetEventType().Name,
-										subscriber.GetType().Name), exception);
+								DefaultSingleton<ICreator>.Instance.Create<ILog>().Error(string.Format("Error handling '{0}' with '{1}'",
+										subscriber.GetEventType().Name, subscriber.GetType().Name), exception);
 							}))
 					.FromConfiguration();
 

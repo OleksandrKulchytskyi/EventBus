@@ -37,35 +37,34 @@ namespace EventBus.Implementation
 			this.Logger = new Logging.Logger();
 		}
 
-		private List<ISubscriber<E>> SearchAssembliesForSubscribers<E>()
+		private List<ISubscriber<TEvnt>> SearchAssembliesForSubscribers<TEvnt>()
 		{
-			List<ISubscriber<E>> ret = new List<ISubscriber<E>>();
+			List<ISubscriber<TEvnt>> ret = new List<ISubscriber<TEvnt>>();
 
 			try
 			{
 				this.AssembliesToSearch.ForEach((assembly) =>
 				{
-					assembly.GetTypes()
-						.Where(a => typeof(ISubscriber<E>).IsAssignableFrom(a) && !a.IsAbstract).ToList()
+					assembly.GetTypes().Where(a => typeof(ISubscriber<TEvnt>).IsAssignableFrom(a) && !a.IsAbstract).ToList()
 						.ForEach((subscriberType) =>
 						{
-							var subscriber = (ISubscriber<E>)this.Creator.Create(subscriberType);
-							this.OnSubscriberActivated(subscriber);
-							ret.Add(subscriber);
+							var subscriberInst = (ISubscriber<TEvnt>)this.Creator.Create(subscriberType);
+							this.OnSubscriberActivated(subscriberInst);
+							ret.Add(subscriberInst);
 						});
 				});
 			}
 			catch (Exception ex)
 			{
-				this.Logger.Error(string.Format("Error during assembly search for '{0}' subscribers", typeof(E).Name), ex);
+				this.Logger.Error(string.Format("Error during assembly search for '{0}' subscribers", typeof(TEvnt).Name), ex);
 			}
 
 			return ret;
 		}
 
-		public void Unsubscribe<E>()
+		public void Unsubscribe<TEvnt>()
 		{
-			var subs = this.SearchAssembliesForSubscribers<E>();
+			var subs = this.SearchAssembliesForSubscribers<TEvnt>();
 
 			subs.ForEach((sub) =>
 			{
@@ -83,33 +82,32 @@ namespace EventBus.Implementation
 				Logger.DebugFormat("Attempting to unsubscribe subscriber of type [{0}]", unsubscriber.GetType().FullName);
 				unsubscriber.Unsubscribe();
 			}
-			catch (Exception e)
+			catch (Exception ex)
 			{
-				Logger.Error(String.Format("Exception was raised while unsubscribing subscriber of type [{0}]",
-					unsubscriber.GetType()), e);
+				Logger.Error(String.Format("Exception was raised while unsubscribing subscriber of type [{0}]", unsubscriber.GetType()), ex);
 			}
 		}
 
-		private void Handle<E>(BusEventArgs<E> eventToHandle, ISubscriber<E> subscriber)
+		private void Handle<TEnt>(BusEventArgs<TEnt> eventToHandle, ISubscriber<TEnt> subscriber)
 		{
 			try
 			{
 				this.OnSubscriberStarted(subscriber, eventToHandle.Data);
-				subscriber.Handle(eventToHandle.Data);
+				subscriber.HandleEvent(eventToHandle.Data);
 			}
-			catch (Exception exception)
+			catch (Exception exc)
 			{
-				this.OnSubcriberExecutionException(subscriber, exception);
+				this.OnSubcriberExecutionException(subscriber, exc);
 			}
 		}
 
-		public Subscribers Subscribe<E>()
+		public Subscribers Subscribe<TEvnt>()
 		{
-			string dbg = string.Format("Searching for ISubscriber implementations for '{0}'", typeof(E).Name);
+			string dbg = string.Format("Searching for ISubscriber implementations for '{0}'", typeof(TEvnt).Name);
 
 			this.Logger.Debug(dbg);
 
-			var subs = this.SearchAssembliesForSubscribers<E>();
+			var subs = this.SearchAssembliesForSubscribers<TEvnt>();
 
 			subs.ForEach((sub) =>
 			{
@@ -125,7 +123,7 @@ namespace EventBus.Implementation
 
 				sub.EventHandled += (sender, e) =>
 				{
-					this.OnSubscriberCompleted((ISubscriber<E>)sender, e.Data);
+					this.OnSubscriberCompleted((ISubscriber<TEvnt>)sender, e.Data);
 				};
 			});
 

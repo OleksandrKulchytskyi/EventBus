@@ -40,9 +40,9 @@ namespace ConsoleRabbitMQ
 
 	public class Message1Subscriber : BaseSubscriber<Message1>
 	{
-		public override void Handle(Message1 target)
+		public override void HandleEvent(Message1 target)
 		{
-			base.Handle(target);
+			base.HandleEvent(target);
 
 			Console.WriteLine("Message1 created [{0}] received [{1}]", target.StartInstant, DateTime.Now);
 			Publishers.Current.Publish(new Message2());
@@ -51,9 +51,9 @@ namespace ConsoleRabbitMQ
 
 	public class Message2Subscriber : BaseSubscriber<Message2>
 	{
-		public override void Handle(Message2 target)
+		public override void HandleEvent(Message2 target)
 		{
-			base.Handle(target);
+			base.HandleEvent(target);
 
 			Console.WriteLine("Message2 created [{0}] received [{1}]", target.StartInstant, DateTime.Now);
 			Publishers.Current.Publish(new Message3());
@@ -62,9 +62,9 @@ namespace ConsoleRabbitMQ
 
 	public class Message3Subscriber : BaseSubscriber<Message3>
 	{
-		public override void Handle(Message3 target)
+		public override void HandleEvent(Message3 target)
 		{
-			base.Handle(target);
+			base.HandleEvent(target);
 			Console.WriteLine("Message3 created [{0}] received [{1}]", target.StartInstant, DateTime.Now);
 		}
 	}

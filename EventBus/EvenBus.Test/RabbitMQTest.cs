@@ -16,7 +16,6 @@ namespace EvenBus.Test
 			try
 			{
 				mre = new ManualResetEvent(false);
-				//EventBus.Implementation.WireDriver.Start();
 			}
 			catch (Exception ex)
 			{
@@ -35,7 +34,6 @@ namespace EvenBus.Test
 					mre.Dispose();
 					mre = null;
 				}
-				//EventBus.Implementation.WireDriver.Stop();
 			}
 			catch (Exception ex)
 			{
@@ -89,6 +87,7 @@ namespace EvenBus.Test
 		{
 			Received = true;
 			mre.Set();
+			(sender as EventBus.Infrastructure.ISubscriber<TestEvent>).HandleEvent(e.Data);
 		}
 
 		void subscriber_EventHandled(object sender, EventBus.Infrastructure.BusEventArgs<TestEvent> e)
