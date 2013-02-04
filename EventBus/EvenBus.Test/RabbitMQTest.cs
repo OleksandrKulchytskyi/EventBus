@@ -118,8 +118,6 @@ namespace EvenBus.Test
 			subscriber.EventReceived += subscriber_EventReceived;
 			subscriber.Subscribe();
 
-			System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3));
-
 			subscriber.Unsubscribe();
 		}
 	}
