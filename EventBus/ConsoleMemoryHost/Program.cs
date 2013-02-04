@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace ConsoleMemoryHost
 {
-	class Program
+	internal class Program
 	{
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			Bootstrap.Init();
 
@@ -16,7 +13,6 @@ namespace ConsoleMemoryHost
 
 			while (Console.ReadLine() != "exit")
 			{
-
 			}
 			t.Change(0, System.Threading.Timeout.Infinite);
 			t.Dispose();
@@ -24,7 +20,7 @@ namespace ConsoleMemoryHost
 			Console.ReadKey();
 		}
 
-		static void Publish(object state)
+		private static void Publish(object state)
 		{
 			Bootstrap.CurrentPublishers.Publish(new ConsoleEvent());
 		}

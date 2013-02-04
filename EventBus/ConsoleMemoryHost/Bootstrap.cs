@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EventBus.Extensions;
+﻿using EventBus.Extensions;
 using EventBus.Implementation;
-using Microsoft.Practices.Unity;
-using log4net;
 using EventBus.Logging;
+using log4net;
+using Microsoft.Practices.Unity;
 
 namespace ConsoleMemoryHost
 {
@@ -33,6 +29,5 @@ namespace ConsoleMemoryHost
 			CurrentPublishers = Publishers.Current.WithCreator(Creator)
 				.WithAssembly<Bootstrap>();
 		}
-
 	}
 }

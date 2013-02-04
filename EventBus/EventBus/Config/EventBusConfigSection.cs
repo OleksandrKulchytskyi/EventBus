@@ -7,11 +7,13 @@ namespace EventBus.Config
 {
 	public class EventBusConfigSection : ConfigurationSection
 	{
+		private static readonly string _secName = "eventBusConfigSection";
+
 		public static EventBusConfigSection Current
 		{
 			get
 			{
-				return ConfigurationManager.GetSection("eventBusConfigSection") as EventBusConfigSection;
+				return ConfigurationManager.GetSection(_secName) as EventBusConfigSection;
 			}
 		}
 
@@ -21,7 +23,7 @@ namespace EventBus.Config
 			{
 				try
 				{
-					var x = ConfigurationManager.GetSection("eventBusConfigSection") as EventBusConfigSection;
+					var x = ConfigurationManager.GetSection(_secName) as EventBusConfigSection;
 					return true;
 				}
 				catch (Exception ex)

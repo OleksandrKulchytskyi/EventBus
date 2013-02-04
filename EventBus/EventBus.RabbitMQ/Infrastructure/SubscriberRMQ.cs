@@ -11,7 +11,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 {
 	public class SubscriberRMQ<TEvnt> : ISubscriber<TEvnt>, IUnsubscribe, IConnectionInfo
 	{
-		private bool HandleOnReceive = false;
+		private bool _HandleOnReceive = false;
 		protected readonly ILog Log;
 		private IConnection _connection;
 		private QueueingBasicConsumer _consumer;
@@ -28,6 +28,8 @@ namespace EventBus.RabbitMQ.Infrastructure
 		{
 			Log = log;
 			_cts = new CancellationTokenSource();
+			if (Config.ReceiverRMQConfigSection.IsConfigured)
+				_HandleOnReceive = Config.ReceiverRMQConfigSection.Current.HandleOnReceive;
 		}
 
 		public virtual string RoutingKey
@@ -226,7 +228,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 				return;
 			}
 
-			if (message != null && HandleOnReceive)
+			if (message != null && _HandleOnReceive)
 			{
 				try
 				{

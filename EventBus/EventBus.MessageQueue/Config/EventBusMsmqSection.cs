@@ -9,11 +9,13 @@ namespace EventBus.MessageQueue.Config
 {
 	public class EventBusMsmqSection : ConfigurationSection
 	{
+		private static readonly string _secName = "eventBusMsmqSection";
+
 		public static EventBusMsmqSection Current
 		{
 			get
 			{
-				return ConfigurationManager.GetSection("eventBusMsmqSection") as EventBusMsmqSection;
+				return ConfigurationManager.GetSection(_secName) as EventBusMsmqSection;
 			}
 		}
 
@@ -23,7 +25,7 @@ namespace EventBus.MessageQueue.Config
 			{
 				try
 				{
-					var x = ConfigurationManager.GetSection("eventBusMsmqSection") as EventBusMsmqSection;
+					var x = ConfigurationManager.GetSection(_secName) as EventBusMsmqSection;
 					return true;
 				}
 				catch (Exception ex)

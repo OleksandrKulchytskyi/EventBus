@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ConsoleMemoryHost
 {
 	internal class ConsoleSubscriber : EventBus.Hosting.MemorySubscriber<ConsoleEvent>
 	{
-		Guid _id;
+		private Guid _id;
+
 		public ConsoleSubscriber()
 			: base()
 		{

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ConsoleMemoryHost
 {
@@ -14,7 +11,9 @@ namespace ConsoleMemoryHost
 		}
 
 		public Guid Id { get; set; }
+
 		public DateTime Published { get; set; }
+
 		public DateTime Handled { get; set; }
 
 		public override string ToString()
