@@ -8,6 +8,7 @@ namespace EventBus.Redis.Implementation
 	{
 		private readonly int _port;
 		private readonly string _host;
+		private readonly string MainChannel = typeof(TEvnt).Name + "/Main";
 
 		public PublisherRedis()
 		{
@@ -30,7 +31,7 @@ namespace EventBus.Redis.Implementation
 			{
 				try
 				{
-					redisPublisher.PublishMessage(typeof(TEvnt).Name, data.SerializeToJSON());
+					redisPublisher.PublishMessage(MainChannel, data.SerializeToJSON());
 				}
 				catch (Exception ex)
 				{

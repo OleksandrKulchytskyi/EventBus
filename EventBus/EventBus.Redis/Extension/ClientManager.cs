@@ -6,7 +6,7 @@ namespace EventBus.Redis.Extension
 {
 	internal class RedisClientsManager : SingletonBase<RedisClientsManager>
 	{
-		private IRedisClientsManager Pool;
+		private readonly IRedisClientsManager Pool;
 
 		private RedisClientsManager()
 		{

@@ -246,28 +246,28 @@ namespace EventBus.Redis.Extension
 			private readonly string AddedChannel;
 			private readonly string ChangedChannel;
 			private readonly string DeletedChannel;
-			private readonly RobustObjectsContainer<ObjectType, DerrivingType> Parent;
+			private readonly RobustObjectsContainer<ObjectType, DerrivingType> _parent;
 			private const string Heartbeat = "Server/Heartbeat";
-			private bool Closing = false;
-			private IRedisSubscription Subscription;
+			private bool _closing = false;
+			private IRedisSubscription _subscription;
 
 			public RedisListener(RobustObjectsContainer<ObjectType, DerrivingType> parent)
 			{
-				Parent = parent;
-				AddedChannel = Parent.TypeName + "/Added";
-				ChangedChannel = Parent.TypeName + "/Changed";
-				DeletedChannel = Parent.TypeName + "/Deleted";
+				_parent = parent;
+				AddedChannel = _parent.TypeName + "/Added";
+				ChangedChannel = _parent.TypeName + "/Changed";
+				DeletedChannel = _parent.TypeName + "/Deleted";
 			}
 
 			public void StartListen()
 			{
 				using (var redisConsumer = RedisClientsManager.Instance.GetClient())
 				{
-					Subscription = redisConsumer.CreateSubscription();
-					Subscription.OnMessage = OnMessage;
-					Subscription.OnSubscribe = OnSubscribe;
-					Subscription.OnUnSubscribe = OnUnSubscribe;
-					Subscription.SubscribeToChannels(ChangedChannel, AddedChannel, DeletedChannel, Heartbeat);
+					_subscription = redisConsumer.CreateSubscription();
+					_subscription.OnMessage = OnMessage;
+					_subscription.OnSubscribe = OnSubscribe;
+					_subscription.OnUnSubscribe = OnUnSubscribe;
+					_subscription.SubscribeToChannels(ChangedChannel, AddedChannel, DeletedChannel, Heartbeat);
 				}
 			}
 
@@ -275,16 +275,16 @@ namespace EventBus.Redis.Extension
 			{
 				using (var client = RedisClientsManager.Instance.GetClient())
 				{
-					Closing = true;
+					_closing = true;
 					client.PublishMessage(Heartbeat, Heartbeat);
 				}
 			}
 
 			private void OnMessage(string channel, string message)
 			{
-				if (Closing)
+				if (_closing)
 				{
-					Subscription.UnSubscribeFromAllChannels();
+					_subscription.UnSubscribeFromAllChannels();
 				}
 				if (channel == Heartbeat)
 				{
@@ -294,15 +294,15 @@ namespace EventBus.Redis.Extension
 				var args = new ObjectEventArgs(message);
 				if (channel == AddedChannel)
 				{
-					Parent.OnAdded(this.Parent, args);
+					_parent.OnAdded(this._parent, args);
 				}
 				else if (channel == ChangedChannel)
 				{
-					Parent.OnChanged(this.Parent, args);
+					_parent.OnChanged(this._parent, args);
 				}
 				else if (channel == DeletedChannel)
 				{
-					Parent.OnDeleted(this.Parent, args);
+					_parent.OnDeleted(this._parent, args);
 				}
 				else
 				{

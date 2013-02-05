@@ -87,12 +87,12 @@ namespace EventBus.Redis.Extension
 		//    subscription.Dispose();
 		//}
 
-		public bool PushMessage<T>(T message)
+		public bool PushMessage(T message)
 		{
 			return redis.PublishMessage(_channelName, message.ToJson<T>()) > 0;
 		}
 
-		event EventHandler IsDisposing;
+		protected event EventHandler IsDisposing;
 
 		public void Dispose()
 		{

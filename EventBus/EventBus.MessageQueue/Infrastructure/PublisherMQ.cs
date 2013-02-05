@@ -58,6 +58,8 @@ namespace EventBus.MessageQueue.Infrastructure
 
 				if (this.Logger != null)
 					this.Logger.Debug(string.Format("Sent Event '{1}' to Message Queue '{0}' with publisher '{2}'", this.QueuePath, typeof(TEvnt).Name, this.GetType().Name));
+				
+				mq.Close();
 			}
 		}
 	}

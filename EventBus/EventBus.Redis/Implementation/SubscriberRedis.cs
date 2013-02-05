@@ -7,13 +7,14 @@ namespace EventBus.Redis.Implementation
 {
 	public class SubscriberRedis<TEvnt> : ISubscriber<TEvnt>, IUnsubscribe, IDisposable
 	{
+		private const string Heartbeat = "Server/Heartbeat";
+		private readonly string MainChannel = typeof(TEvnt).Name + "/Main";
 		private int _disposed = 0;
+		private int _closing = 0;
 		private int _subscribed = 0;
 		private readonly int _port;
 		private readonly string _host;
 		private int _MessageReceived = 0;
-
-		private RedisClient _redisConsumer = null;
 		private IRedisSubscription _redisSubscription = null;
 
 		public SubscriberRedis()
@@ -75,31 +76,43 @@ namespace EventBus.Redis.Implementation
 			{
 				System.Threading.Tasks.Task.Factory.StartNew(() =>
 				{
-					try
-					{
-						_redisConsumer = new RedisClient(_host, _port);
-						_redisSubscription = _redisConsumer.CreateSubscription();
-
-						_redisSubscription.OnSubscribe = OnChannelSubscribe;
-						_redisSubscription.OnUnSubscribe = OnChannelUnsubscribe;
-						_redisSubscription.OnMessage = OnChannelMessage;
-
-						System.Diagnostics.Debug.WriteLine("Before calling SubscribeToChannels");
-
-						_redisSubscription.SubscribeToChannels(typeof(TEvnt).Name);
-						_redisSubscription.OnSubscribe = null;
-						_redisSubscription.OnUnSubscribe = null;
-						_redisSubscription.OnMessage = null;
-					}
-					catch (Exception ex)
-					{
-						System.Diagnostics.Debug.WriteLine(ex.Message);
-						if (_redisSubscription != null)
-							_redisSubscription.UnSubscribeFromAllChannels();
-
-						throw;
-					}
+					StartListen();
 				}, System.Threading.Tasks.TaskCreationOptions.LongRunning);
+			}
+		}
+
+		private void StartListen()
+		{
+			using (var redisConsumer = new RedisClient(_host, _port))
+			{
+				try
+				{
+					_redisSubscription = redisConsumer.CreateSubscription();
+
+					_redisSubscription.OnSubscribe = OnChannelSubscribe;
+					_redisSubscription.OnUnSubscribe = OnChannelUnsubscribe;
+					_redisSubscription.OnMessage = OnChannelMessage;
+
+					System.Diagnostics.Debug.WriteLine("Before calling SubscribeToChannels");
+
+					_redisSubscription.SubscribeToChannels(MainChannel, Heartbeat);
+					_redisSubscription.OnSubscribe = null;
+					_redisSubscription.OnUnSubscribe = null;
+					_redisSubscription.OnMessage = null;
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine(ex.Message);
+					if (_redisSubscription != null)
+						_redisSubscription.UnSubscribeFromAllChannels();
+
+					throw;
+				}
+				finally
+				{
+					_redisSubscription.Dispose();
+					_redisSubscription = null;
+				}
 			}
 		}
 
@@ -115,7 +128,15 @@ namespace EventBus.Redis.Implementation
 
 		protected void OnChannelMessage(string channel, string msg)
 		{
-			if (channel.Equals(typeof(TEvnt).Name, StringComparison.OrdinalIgnoreCase))
+			if (_closing == 1)
+			{
+				_redisSubscription.UnSubscribeFromAllChannels();
+			}
+			if (channel.Equals(Heartbeat, StringComparison.OrdinalIgnoreCase))
+			{
+				return;
+			}
+			else if (channel.Equals(MainChannel, StringComparison.OrdinalIgnoreCase))
 			{
 				var evnt = msg.DeserializeFromJSON<TEvnt>();
 				System.Threading.Interlocked.Increment(ref _MessageReceived);
@@ -135,7 +156,13 @@ namespace EventBus.Redis.Implementation
 
 		public void Unsubscribe()
 		{
-			Dispose();
+			if (System.Threading.Interlocked.Exchange(ref _closing, 1) == 0)
+			{
+				using (var client = new RedisClient(_host, _port))
+				{
+					client.PublishMessage(Heartbeat, Heartbeat);
+				}
+			}
 		}
 
 		public void Dispose()
@@ -150,14 +177,16 @@ namespace EventBus.Redis.Implementation
 			{
 				if (disposing)
 				{
-					var client = System.Threading.Interlocked.CompareExchange<RedisClient>(ref _redisConsumer, null, null);
-					var subs = System.Threading.Interlocked.CompareExchange<IRedisSubscription>(ref _redisSubscription, null, null);
-					if (client != null && subs != null)
+					if (_closing == 0)
 					{
-						subs.UnSubscribeFromChannels(typeof(TEvnt).Name);
+						Unsubscribe();
+					}
+
+					var subs = System.Threading.Interlocked.CompareExchange<IRedisSubscription>(ref _redisSubscription, null, null);
+					if (subs != null)
+					{
+						subs.UnSubscribeFromChannels(MainChannel, Heartbeat);
 						subs.Dispose();
-						client.Dispose();
-						subs = null; client = null;
 					}
 				}
 			}
