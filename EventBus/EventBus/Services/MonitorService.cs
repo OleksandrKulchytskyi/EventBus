@@ -150,17 +150,17 @@ namespace EventBus.Services
 			}
 		}
 
-		public void Connect(MonitorConnectRequest request)
+		public void Connect(ConnectRequest request)
 		{
 			var client = OperationContext.Current.GetCallbackChannel<IMonitorClient>();
 
 			DefaultSingleton<ICreator>.Instance.Create<ILog>().Info(string.Format("New client has been connected '{0}'", request.ClientMachineName));
 			this.Clients.Add(client);
 
-			client.OnClientConnected(new MonitorConnectResponse { Success = true });
+			client.OnClientConnected(new ConnectResponse { Success = true });
 		}
 
-		public void Disconnect(MonitorConnectRequest request)
+		public void Disconnect(DisconnectRequest request)
 		{
 			var client = OperationContext.Current.GetCallbackChannel<IMonitorClient>();
 
@@ -169,7 +169,7 @@ namespace EventBus.Services
 			this.Clients.Remove(client);
 		}
 
-		public void GetSubscribers(MonitorGetSubscriberListRequest request)
+		public void GetSubscribers(GetSubscriberListRequest request)
 		{
 			var args = new List<SubscriberEventArgs>();
 
