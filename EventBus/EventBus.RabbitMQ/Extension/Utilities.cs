@@ -10,13 +10,14 @@ namespace EventBus.RabbitMQ.Extension
 	{
 		public static byte[] Serialize<E>(this E e)
 		{
-			string json=Newtonsoft.Json.JsonConvert.SerializeObject(e, Newtonsoft.Json.Formatting.Indented);
-			return System.Text.Encoding.UTF8.GetBytes(json);
+			var serTask = Newtonsoft.Json.JsonConvert.SerializeObjectAsync(e, Newtonsoft.Json.Formatting.Indented);
+			serTask.Wait();
+			return System.Text.Encoding.UTF8.GetBytes(serTask.Result);
 		}
 
 		public static E Deserialize<E>(this byte[] messageData)
 		{
-			var task=Newtonsoft.Json.JsonConvert.DeserializeObjectAsync<E>(System.Text.Encoding.UTF8.GetString(messageData));
+			var task = Newtonsoft.Json.JsonConvert.DeserializeObjectAsync<E>(System.Text.Encoding.UTF8.GetString(messageData));
 			task.Wait();
 			return task.Result;
 		}
@@ -24,13 +25,11 @@ namespace EventBus.RabbitMQ.Extension
 		public static ConnectionFactory CreateConnectionFactory(this IConnectionInfo connectionDescriptor)
 		{
 			IProtocol protocol = null;
-			if (!String.IsNullOrEmpty(connectionDescriptor.Protocol))
+			if (!string.IsNullOrEmpty(connectionDescriptor.Protocol))
 				protocol = Protocols.SafeLookup(connectionDescriptor.Protocol);
 
-
-			if (null == protocol)
-				protocol = Protocols.FromConfiguration() ?? Protocols.FromEnvironment() ??
-						   Protocols.FromEnvironmentVariable() ?? Protocols.DefaultProtocol;
+			if (protocol != null)
+				protocol = Protocols.FromConfiguration() ?? Protocols.FromEnvironment() ?? Protocols.FromEnvironmentVariable() ?? Protocols.DefaultProtocol;
 
 			ConnectionFactory connectionFactory = new ConnectionFactory
 			{
@@ -38,13 +37,13 @@ namespace EventBus.RabbitMQ.Extension
 				Protocol = protocol
 			};
 
-			if (!String.IsNullOrEmpty(connectionDescriptor.VirtualHost))
+			if (!string.IsNullOrEmpty(connectionDescriptor.VirtualHost))
 				connectionFactory.VirtualHost = connectionDescriptor.VirtualHost;
 
-			if (!String.IsNullOrEmpty(connectionDescriptor.UserName))
+			if (!string.IsNullOrEmpty(connectionDescriptor.UserName))
 				connectionFactory.UserName = connectionDescriptor.UserName;
 
-			if (!String.IsNullOrEmpty(connectionDescriptor.Password))
+			if (!string.IsNullOrEmpty(connectionDescriptor.Password))
 				connectionFactory.Password = connectionDescriptor.Password;
 
 			return connectionFactory;

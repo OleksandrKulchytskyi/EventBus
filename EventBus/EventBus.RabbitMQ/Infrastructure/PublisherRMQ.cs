@@ -61,6 +61,8 @@ namespace EventBus.RabbitMQ.Infrastructure
 					model.BasicPublish(ExchangeName, RoutingKey, null, body);
 				}
 			}
+			connectionFactory = null;
+			body = null;
 		}
 
 		#endregion IPublisher<E> Members

@@ -9,14 +9,13 @@ using System.Threading;
 
 namespace EventBus.RabbitMQ.Infrastructure
 {
-	public class SubscriberRMQ<TEvnt> : ISubscriber<TEvnt>, IUnsubscribe, IConnectionInfo
+	public class SubscriberRMQ<TEvnt> : ISubscriber<TEvnt>, IUnsubscribe, IConnectionInfo, IDisposable
 	{
 		private bool _HandleOnReceive = false;
 		protected readonly ILog Log;
 		private IConnection _connection;
 		private QueueingBasicConsumer _consumer;
 		private IModel _model;
-
 		private delegate object DequeueMethod();
 
 		private readonly CancellationTokenSource _cts;
@@ -72,6 +71,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 			return typeof(TEvnt);
 		}
 
+		#region events
 		public event EventHandler<BusEventArgs<TEvnt>> EventReceived;
 
 		protected virtual void OnEventReceived(TEvnt message)
@@ -98,18 +98,28 @@ namespace EventBus.RabbitMQ.Infrastructure
 		{
 			OnEventHandled(target);
 		}
+		#endregion
 
 		public void Subscribe()
 		{
-			CloseExistingConnectionAndModel();
-			CreateConnectionAndModel();
+			try
+			{
+				CloseExistingConnectionAndModel();
+				CreateConnectionAndModel();
 
-			string queueName = DeclareAndBindQueue();
+				string queueName = DeclareAndBindQueue();
 
-			_consumer = new QueueingBasicConsumer(_model);
-			_model.BasicConsume(queueName, true, _consumer);
+				_consumer = new QueueingBasicConsumer(_model);
+				_model.BasicConsume(queueName, true, _consumer);
 
-			InvokeAsyncDequeue();
+				InvokeAsyncDequeue();
+			}
+			catch (Exception ex)
+			{
+				Log.Error("Error occurred while perform subscribe operation", ex);
+				CancelReceive();
+				CloseExistingConnectionAndModel();
+			}
 		}
 
 		#endregion ISubscriber<E> Members
@@ -136,8 +146,8 @@ namespace EventBus.RabbitMQ.Infrastructure
 		{
 			_model.ExchangeDeclare(ExchangeName, ExchangeType.Direct);
 
-			var queueName = QueueName;
-			if (null == queueName)
+			string queueName = QueueName;
+			if (string.IsNullOrEmpty(queueName))
 			{
 				queueName = _model.QueueDeclare();
 			}
@@ -153,17 +163,17 @@ namespace EventBus.RabbitMQ.Infrastructure
 		private void CreateConnectionAndModel()
 		{
 			ConnectionFactory connectionFactory = this.CreateConnectionFactory();
-			var connection = connectionFactory.CreateConnection();
-			var extCon = Interlocked.CompareExchange(ref _connection, connection, null);
-			if (extCon != null)
+			IConnection connection = connectionFactory.CreateConnection();
+			var existCon = Interlocked.CompareExchange(ref _connection, connection, null);
+			if (existCon != null)
 			{
 				CloseConnection(connection);
 			}
 			else
 			{
-				var model = _connection.CreateModel();
-				var existingModel = Interlocked.CompareExchange(ref _model, model, null);
-				if (existingModel != null)
+				IModel model = _connection.CreateModel();
+				var existModel = Interlocked.CompareExchange(ref _model, model, null);
+				if (existModel != null)
 				{
 					CloseModel(model);
 				}
@@ -208,7 +218,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 			BasicDeliverEventArgs message = null;
 			try
 			{
-				if (_cts.IsCancellationRequested)
+				if (_disposed != 0 || _cts.IsCancellationRequested)
 					return;
 
 				DequeueMethod dq = (DequeueMethod)ar.AsyncState;
@@ -232,6 +242,8 @@ namespace EventBus.RabbitMQ.Infrastructure
 
 			if (message != null && _HandleOnReceive)
 			{
+				if (_disposed != 0 || _cts.IsCancellationRequested)
+					return;
 				try
 				{
 					HandleData(message);
@@ -241,6 +253,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 					Log.Error("Error occured while try to handle the message; \n\r the next dequeue operation will still occur", e);
 				}
 			}
+			message = null;
 
 			InvokeAsyncDequeue();
 		}
@@ -250,5 +263,27 @@ namespace EventBus.RabbitMQ.Infrastructure
 			TEvnt e = message.Body.Deserialize<TEvnt>();
 			HandleEvent(e);
 		}
+
+		#region IDisposable Members
+
+		private int _disposed;
+
+		public void Dispose()
+		{
+			this.Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(Boolean disposing)
+		{
+			if (System.Threading.Interlocked.Exchange(ref _disposed, 1) == 0)
+			{
+				if (disposing)
+				{
+					Unsubscribe();
+				}
+			}
+		}
+		#endregion
 	}
 }
