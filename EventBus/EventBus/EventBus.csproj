@@ -71,6 +71,7 @@
     <Compile Include="Hosting\MemoryPublisher.cs" />
     <Compile Include="Hosting\MemorySubscriber.cs" />
     <Compile Include="Implementation\DefaultCreator.cs" />
+    <Compile Include="Implementation\MessageBus.cs" />
     <Compile Include="Implementation\Publishers.cs" />
     <Compile Include="Implementation\Subscribers.cs" />
     <Compile Include="Implementation\UnityCreator.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Infrastructure\Contracts.cs" />
     <Compile Include="Infrastructure\DefaultSingleton.cs" />
     <Compile Include="Infrastructure\ICreator.cs" />
+    <Compile Include="Infrastructure\IMessageBus.cs" />
     <Compile Include="Infrastructure\IPublisher.cs" />
     <Compile Include="Infrastructure\ISubscriber.cs" />
     <Compile Include="Infrastructure\IUnsubscribe.cs" />
