@@ -2,7 +2,7 @@
 
 namespace EventBus.MessageBus
 {
-	internal interface IMessageBus
+	internal interface IMessageBroker
 	{
 		int GroupCount { get; }
 

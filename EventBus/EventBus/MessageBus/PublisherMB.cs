@@ -10,7 +10,7 @@ namespace EventBus.MessageBus
 	{
 		public virtual void Publish(TEvent data)
 		{
-			MessgaeBus.Instance.Publish<TEvent>(data);
+			MessgaeBroker.Instance.Publish<TEvent>(data);
 		}
 	}
 }

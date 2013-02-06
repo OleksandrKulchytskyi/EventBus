@@ -8,7 +8,7 @@ using System.Threading;
 namespace EventBus.Test
 {
 	[TestClass]
-	public class MessageBusTest
+	public class MessageBrokerTest
 	{
 		CountdownEvent countEvent;
 
@@ -29,7 +29,7 @@ namespace EventBus.Test
 		[TestMethod]
 		public void GroupTestMethod()
 		{
-			Assert.IsTrue(MessageBus.MessgaeBus.Instance.GroupCount == 0);
+			Assert.IsTrue(MessageBus.MessgaeBroker.Instance.GroupCount == 0);
 
 			var pub = new TestEventPublisherMB();
 
@@ -59,7 +59,7 @@ namespace EventBus.Test
 			Assert.IsTrue(thrown);
 
 
-			Assert.IsTrue(MessageBus.MessgaeBus.Instance.GroupCount == 1);
+			Assert.IsTrue(MessageBus.MessgaeBroker.Instance.GroupCount == 1);
 
 			pub.Publish(new TestEvent() { Data = "Hello subscribers", Processed = false });
 
@@ -76,9 +76,9 @@ namespace EventBus.Test
 			if (!countEvent.Wait(TimeSpan.FromSeconds(1)))
 				Assert.Fail();
 
-			MessageBus.MessgaeBus.Instance.Drain();
+			MessageBus.MessgaeBroker.Instance.Drain();
 
-			Assert.IsTrue(MessageBus.MessgaeBus.Instance.GroupCount == 0);
+			Assert.IsTrue(MessageBus.MessgaeBroker.Instance.GroupCount == 0);
 		}
 
 		void sub1_EventHandled(object sender, Infrastructure.BusEventArgs<TestEvent> e)

@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace EventBus.MessageBus
 {
-	public class MessgaeBus : SingletonBase<MessgaeBus>, IMessageBus
+	public class MessgaeBroker : SingletonBase<MessgaeBroker>, IMessageBroker
 	{
 		private readonly Lazy<ConcurrentDictionary<Type, HashSet<object>>> _lazyContainer = new Lazy<ConcurrentDictionary<Type, HashSet<object>>>(
 				() => new ConcurrentDictionary<Type, HashSet<object>>());
@@ -16,15 +16,26 @@ namespace EventBus.MessageBus
 		private int _draining = 0;
 		private int _groupCount;
 
-		private MessgaeBus()
+		private MessgaeBroker()
 		{
 			_groupCount = 0;
 		}
 
+		private void ThrowIfNull(object value, string paramName = "")
+		{
+			if (value == null && !string.IsNullOrEmpty(paramName))
+				throw new ArgumentNullException(paramName);
+			else
+				throw new ArgumentNullException();
+
+		}
+
 		public void Subscribe<TEvent>(Infrastructure.ISubscriber<TEvent> subscriber)
 		{
+			ThrowIfNull(subscriber);
 			if (_draining == 1)
 				return;
+		
 			Type key = typeof(TEvent);
 			if (_lazyContainer.Value.ContainsKey(key))
 			{
@@ -47,8 +58,10 @@ namespace EventBus.MessageBus
 
 		public void Unsubscribe<TEvent>(Infrastructure.ISubscriber<TEvent> subscriber)
 		{
+			ThrowIfNull(subscriber);
 			if (_draining == 1)
 				return;
+			
 			Type key = typeof(TEvent);
 			if (_lazyContainer.Value.ContainsKey(key))
 			{
@@ -61,10 +74,12 @@ namespace EventBus.MessageBus
 
 		public void Publish<TEvent>(TEvent message)
 		{
+			ThrowIfNull(message);
 			if (_draining == 1)
 				return;
+			
 			Type key = typeof(TEvent);
-			if (_lazyContainer.Value.ContainsKey(key) && _lazyContainer.Value[key] != null)
+			if (_lazyContainer.Value.ContainsKey(key) && _lazyContainer.Value[key] != null && _lazyContainer.Value[key].Count > 0)
 			{
 				foreach (var item in _lazyContainer.Value[key])
 				{
