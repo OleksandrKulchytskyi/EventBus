@@ -88,7 +88,7 @@ namespace EventBus.MessageQueue.Infrastructure
 				catch (Exception ex)
 				{
 					this.Logger.Error(string.Format("Error during {0}.Subscribe()", this.GetType().Name), ex);
-				} 
+				}
 			}
 		}
 
@@ -126,7 +126,8 @@ namespace EventBus.MessageQueue.Infrastructure
 
 		public void Unsubscribe()
 		{
-			_cts.Cancel();
+			if (_disposed == 0 && !_cts.IsCancellationRequested)
+				_cts.Cancel();
 		}
 
 		public void Dispose()
@@ -141,7 +142,8 @@ namespace EventBus.MessageQueue.Infrastructure
 			{
 				if (disposing)
 				{
-					_cts.Cancel();
+					if (!_cts.IsCancellationRequested)
+						_cts.Cancel();
 
 					_mq.ReceiveCompleted -= OnMQReceiveCompleted;
 					_mq.Close();
