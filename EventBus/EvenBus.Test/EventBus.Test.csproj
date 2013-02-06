@@ -78,6 +78,7 @@
     <Compile Include="MQUtilsTest.cs" />
     <Compile Include="RabbitMQTest.cs" />
     <Compile Include="EventRedisTest.cs" />
+    <Compile Include="MessageBusTest.cs" />
     <Compile Include="WireTest.cs" />
   </ItemGroup>
   <ItemGroup>

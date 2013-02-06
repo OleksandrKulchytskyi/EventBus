@@ -227,6 +227,7 @@ namespace EventBus.RabbitMQ.Infrastructure
 				{
 					OnEventReceived(message.Body.Deserialize<TEvnt>());
 				}
+				//_model.BasicAck(message.DeliveryTag, false);
 			}
 			catch (EndOfStreamException endEx)
 			{

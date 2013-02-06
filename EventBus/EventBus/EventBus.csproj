@@ -68,6 +68,7 @@
     <Compile Include="Config\EventBusConfigSection.cs" />
     <Compile Include="Extensions\AssemblyExtension.cs" />
     <Compile Include="Extensions\CreatorExtension.cs" />
+    <Compile Include="Extensions\DynamicDictionary.cs" />
     <Compile Include="Hosting\MemoryPublisher.cs" />
     <Compile Include="Hosting\MemorySubscriber.cs" />
     <Compile Include="Implementation\DefaultCreator.cs" />
@@ -86,6 +87,11 @@
     <Compile Include="Infrastructure\MainDelegates.cs" />
     <Compile Include="Infrastructure\SingletonBase.cs" />
     <Compile Include="Logging\Logger.cs" />
+    <Compile Include="MessageBus\IMessageBus.cs" />
+    <Compile Include="MessageBus\INotify.cs" />
+    <Compile Include="MessageBus\MessgaeBus.cs" />
+    <Compile Include="MessageBus\PublisherMB.cs" />
+    <Compile Include="MessageBus\SubscriberMB.cs" />
     <Compile Include="Services\MonitorService.cs" />
   </ItemGroup>
   <ItemGroup>
