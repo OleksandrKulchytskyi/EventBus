@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace EventBus.Implementation
 {
-	public sealed class MessageBus : IMessageBus
+	public sealed class ActionMessageBus : IMessageBus
 	{
 		private Dictionary<Type, List<Object>> _Subscribers = new Dictionary<Type, List<Object>>();
 

@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EventBus.Implementation;
 
-namespace EvenBus.Test
+namespace EventBus.Test
 {
 	[TestClass]
 	public class WireTest

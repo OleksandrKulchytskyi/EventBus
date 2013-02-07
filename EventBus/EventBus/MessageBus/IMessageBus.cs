@@ -2,7 +2,7 @@
 
 namespace EventBus.MessageBus
 {
-	internal interface IMessageBroker
+	internal interface IMessageBroker:IClearable
 	{
 		int GroupCount { get; }
 
@@ -11,7 +11,5 @@ namespace EventBus.MessageBus
 		void Unsubscribe<TEvent>(ISubscriber<TEvent> subscriber);
 
 		void Publish<TEvent>(TEvent msg);
-
-		void Drain();
 	}
 }

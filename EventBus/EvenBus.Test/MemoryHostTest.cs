@@ -6,7 +6,7 @@ using EventBus.Extensions;
 using System.Threading;
 using EventBus.Hosting;
 
-namespace EvenBus.Test
+namespace EventBus.Test
 {
 	[TestClass]
 	public class MemoryHostTest

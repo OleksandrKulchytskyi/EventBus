@@ -4,7 +4,7 @@ using EventBus.Infrastructure;
 using EventBus.Implementation;
 using System.Reflection;
 
-namespace EvenBus.Test
+namespace EventBus.Test
 {
 	[TestClass]
 	public class TestSubscriber

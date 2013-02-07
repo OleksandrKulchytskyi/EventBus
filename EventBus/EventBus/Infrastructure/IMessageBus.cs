@@ -12,4 +12,11 @@ namespace EventBus.Infrastructure
 
 		void Publish(Object message);
 	}
+
+	public interface IDsiposingMessageBus:IClearable
+	{
+		IDisposable Subscribe<T>(ISubscriber<T> subs) where T : class,IMessage;
+
+		void Publish<T>(T message) where T : class,IMessage;
+	}
 }

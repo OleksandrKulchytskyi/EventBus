@@ -8,6 +8,15 @@ namespace EventBus.Config
 	public class EventBusConfigSection : ConfigurationSection
 	{
 		private static readonly string _secName = "eventBusConfigSection";
+		private static int _triggered = 0;
+
+		public static bool IsCreatorTriggered
+		{
+			get
+			{
+				return _triggered == 1;
+			}
+		}
 
 		public static EventBusConfigSection Current
 		{
@@ -63,6 +72,9 @@ namespace EventBus.Config
 
 		public static void TriggerCreator()
 		{
+			if (System.Threading.Interlocked.Exchange(ref _triggered, 1) == 1)
+				return;
+
 			var creatorType = Type.GetType(EventBusConfigSection.Current.CreatorType);
 			var creator = Activator.CreateInstance(creatorType);
 			DefaultSingleton<ICreator>.Instance = (ICreator)creator;

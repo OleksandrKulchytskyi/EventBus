@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading;
 
-namespace EvenBus.Test
+namespace EventBus.Test
 {
 	[TestClass]
 	public class MQUtilsTest

@@ -45,6 +45,9 @@
     <Reference Include="Microsoft.Practices.Unity.Configuration">
       <HintPath>..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -63,32 +66,49 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Converters\DateTimeConverters.cs" />
+    <Compile Include="Deffered\DelayedPublisher.cs" />
+    <Compile Include="Deffered\DelayedSubscriber.cs" />
+    <Compile Include="Deffered\DisposingMessageBus.cs" />
     <Compile Include="Extensions\ConfigExt.cs" />
     <Compile Include="Config\ConfigurationCollectionGeneric.cs" />
     <Compile Include="Config\EventBusConfigSection.cs" />
     <Compile Include="Extensions\AssemblyExtension.cs" />
     <Compile Include="Extensions\CreatorExtension.cs" />
+    <Compile Include="Extensions\Disposer.cs" />
     <Compile Include="Extensions\DynamicDictionary.cs" />
+    <Compile Include="Extensions\ReaderWriterLockExtension.cs" />
+    <Compile Include="Extensions\SpinLockExtension.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Hosting\MemoryPublisher.cs" />
     <Compile Include="Hosting\MemorySubscriber.cs" />
     <Compile Include="Implementation\DefaultCreator.cs" />
+    <Compile Include="Implementation\FsMessgaeStore.cs" />
+    <Compile Include="Implementation\JsonMessageSerializer.cs" />
+    <Compile Include="Implementation\MemoryMessageStore.cs" />
     <Compile Include="Implementation\MessageBus.cs" />
     <Compile Include="Implementation\Publishers.cs" />
     <Compile Include="Implementation\Subscribers.cs" />
     <Compile Include="Implementation\UnityCreator.cs" />
     <Compile Include="Implementation\WireDriver.cs" />
+    <Compile Include="Infrastructure\BsonMessageSerializer.cs" />
     <Compile Include="Infrastructure\Contracts.cs" />
     <Compile Include="Infrastructure\DefaultSingleton.cs" />
+    <Compile Include="Infrastructure\IClearable.cs" />
     <Compile Include="Infrastructure\ICreator.cs" />
     <Compile Include="Infrastructure\IMessageBus.cs" />
+    <Compile Include="Infrastructure\IMessageSerializer.cs" />
+    <Compile Include="Infrastructure\IMessageStore.cs" />
     <Compile Include="Infrastructure\IPublisher.cs" />
     <Compile Include="Infrastructure\ISubscriber.cs" />
     <Compile Include="Infrastructure\IUnsubscribe.cs" />
     <Compile Include="Infrastructure\MainDelegates.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Infrastructure\SingletonBase.cs" />
+    <Compile Include="LINQ\LinqExtension.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="MessageBus\IMessageBus.cs" />
-    <Compile Include="MessageBus\INotify.cs" />
+    <Compile Include="Infrastructure\INotify.cs" />
     <Compile Include="MessageBus\MessgaeBus.cs" />
     <Compile Include="MessageBus\PublisherMB.cs" />
     <Compile Include="MessageBus\SubscriberMB.cs" />

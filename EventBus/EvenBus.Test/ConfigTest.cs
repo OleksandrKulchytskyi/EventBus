@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-namespace EvenBus.Test
+namespace EventBus.Test
 {
 	[TestClass]
 	public class ConfigTest

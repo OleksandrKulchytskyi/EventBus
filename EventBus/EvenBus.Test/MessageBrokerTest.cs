@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EventBus.MessageBus;
-using EvenBus.Test;
+using EventBus.Test;
 using EventBus.Infrastructure;
 using System.Threading;
 
@@ -76,7 +76,7 @@ namespace EventBus.Test
 			if (!countEvent.Wait(TimeSpan.FromSeconds(1)))
 				Assert.Fail();
 
-			MessageBus.MessgaeBroker.Instance.Drain();
+			MessageBus.MessgaeBroker.Instance.Clear();
 
 			Assert.IsTrue(MessageBus.MessgaeBroker.Instance.GroupCount == 0);
 		}

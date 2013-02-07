@@ -6,7 +6,7 @@
     <ProjectGuid>{D6F25CB1-6D98-4B74-BE61-FFFCA8CE883A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EvenBus.Test</RootNamespace>
+    <RootNamespace>EventBus.Test</RootNamespace>
     <AssemblyName>EvenBus.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -79,6 +79,9 @@
     <Compile Include="RabbitMQTest.cs" />
     <Compile Include="EventRedisTest.cs" />
     <Compile Include="MessageBrokerTest.cs" />
+    <Compile Include="LingTest.cs" />
+    <Compile Include="MessageStoreTest.cs" />
+    <Compile Include="SerializerTest.cs" />
     <Compile Include="WireTest.cs" />
   </ItemGroup>
   <ItemGroup>

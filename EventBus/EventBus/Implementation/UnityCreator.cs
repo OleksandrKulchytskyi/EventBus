@@ -32,7 +32,7 @@ namespace EventBus.Implementation
 			return this.Container.Resolve<T>();
 		}
 
-		public void Drain()
+		public void Clear()
 		{
 			return;
 		}

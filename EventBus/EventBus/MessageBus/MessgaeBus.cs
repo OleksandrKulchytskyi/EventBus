@@ -35,7 +35,7 @@ namespace EventBus.MessageBus
 			ThrowIfNull(subscriber);
 			if (_draining == 1)
 				return;
-		
+
 			Type key = typeof(TEvent);
 			if (_lazyContainer.Value.ContainsKey(key))
 			{
@@ -61,7 +61,7 @@ namespace EventBus.MessageBus
 			ThrowIfNull(subscriber);
 			if (_draining == 1)
 				return;
-			
+
 			Type key = typeof(TEvent);
 			if (_lazyContainer.Value.ContainsKey(key))
 			{
@@ -77,7 +77,7 @@ namespace EventBus.MessageBus
 			ThrowIfNull(message);
 			if (_draining == 1)
 				return;
-			
+
 			Type key = typeof(TEvent);
 			if (_lazyContainer.Value.ContainsKey(key) && _lazyContainer.Value[key] != null && _lazyContainer.Value[key].Count > 0)
 			{
@@ -94,7 +94,7 @@ namespace EventBus.MessageBus
 			}
 		}
 
-		public void Drain()
+		public void Clear()
 		{
 			if (Interlocked.Exchange(ref _draining, 1) == 1)
 				return;

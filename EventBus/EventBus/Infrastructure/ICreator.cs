@@ -2,12 +2,11 @@
 
 namespace EventBus.Infrastructure
 {
-	public interface ICreator
+	public interface ICreator : IClearable
 	{
 		T Create<T>();
 
 		object Create(Type t);
 
-		void Drain();
 	}
 }
