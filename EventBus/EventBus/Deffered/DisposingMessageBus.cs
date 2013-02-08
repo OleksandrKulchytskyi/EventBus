@@ -43,18 +43,10 @@ namespace EventBus.Deffered
 
 			_locker.SafeWork(() =>
 			{
-				if (container.Contains(subscriber))
-					throw new InvalidOperationException("This subscriber has been already subscribed to this event.");
-
-				container.Add(subscriber);
-			});
-
-			_locker.SafeWork(() =>
-			{
 				HashSet<IMessage> delayedMsgs;
 				if (container.Count == 0 && _lazyDefferMsgs.Value.TryGetValue(key, out delayedMsgs) && delayedMsgs != null)
 				{
-					Parallel.ForEach(container, item =>
+					Parallel.ForEach(delayedMsgs, item =>
 					{
 						if ((subscriber as INotify<T>) != null)
 							_locker.SafeWork(() => (subscriber as INotify<T>).Notify(item as T));
@@ -65,6 +57,13 @@ namespace EventBus.Deffered
 				}
 			});
 
+			_locker.SafeWork(() =>
+			{
+				if (container.Contains(subscriber))
+					throw new InvalidOperationException("This subscriber has been already subscribed to this event.");
+
+				container.Add(subscriber);
+			});
 
 			return new Disposer(() =>
 			{
@@ -88,6 +87,7 @@ namespace EventBus.Deffered
 			{
 				var holder = _lazyDefferMsgs.Value.GetOrAdd(key, new HashSet<IMessage>());
 				_locker.SafeWork(() => holder.Add(message));
+				return;
 			}
 			else
 			{
