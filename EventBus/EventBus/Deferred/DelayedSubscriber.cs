@@ -18,9 +18,9 @@ namespace EventBus.Deferred
 					DefaultSingleton<ICreator>.Instance = new Implementation.DefaultCreator();
 			}
 
-			if (DefaultSingleton<IDisposingMessageBus>.Instance == null)
+			if (DefaultSingleton<IDisposableMessageBus>.Instance == null)
 			{
-				DefaultSingleton<IDisposingMessageBus>.Instance = DefaultSingleton<ICreator>.Instance.Create<DisposingMessageBus>();
+				DefaultSingleton<IDisposableMessageBus>.Instance = DefaultSingleton<ICreator>.Instance.Create<DisposableMessageBus>();
 			}
 		}
 
@@ -55,7 +55,7 @@ namespace EventBus.Deferred
 		public virtual void Subscribe()
 		{
 			System.Threading.Interlocked.Exchange(ref _unsubscribed, 0);
-			subscription = DefaultSingleton<IDisposingMessageBus>.Instance.Subscribe<TEvent>(this);
+			subscription = DefaultSingleton<IDisposableMessageBus>.Instance.Subscribe<TEvent>(this);
 		}
 
 		public Type GetEventType()

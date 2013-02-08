@@ -17,16 +17,20 @@ namespace EventBus.Deferred
 				if (DefaultSingleton<ICreator>.Instance == null)
 					DefaultSingleton<ICreator>.Instance = new Implementation.DefaultCreator();
 			}
-
-			if (DefaultSingleton<IDisposingMessageBus>.Instance == null)
+			else
 			{
-				DefaultSingleton<IDisposingMessageBus>.Instance = DefaultSingleton<ICreator>.Instance.Create<DisposingMessageBus>();
+				DefaultSingleton<ICreator>.Instance = new Implementation.DefaultCreator();
+			}
+
+			if (DefaultSingleton<IDisposableMessageBus>.Instance == null)
+			{
+				DefaultSingleton<IDisposableMessageBus>.Instance = DefaultSingleton<ICreator>.Instance.Create<DisposableMessageBus>();
 			}
 		}
 
 		public virtual void Publish(TEvent data)
 		{
-			DefaultSingleton<IDisposingMessageBus>.Instance.Publish<TEvent>(data);
+			DefaultSingleton<IDisposableMessageBus>.Instance.Publish<TEvent>(data);
 		}
 	}
 }

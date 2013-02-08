@@ -1,14 +1,15 @@
 ﻿using EventBus.Extensions;
 using EventBus.Infrastructure;
 using System;
-using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 namespace EventBus.Deferred
 {
-	internal class DisposingMessageBus : IDisposingMessageBus
+	internal class DisposableMessageBus : IDisposableMessageBus
 	{
 		private readonly Lazy<ConcurrentDictionary<Type, HashSet<object>>> _lazyDict;
 		private readonly Lazy<ConcurrentDictionary<Type, HashSet<IMessage>>> _lazyDefferMsgs;
@@ -16,7 +17,7 @@ namespace EventBus.Deferred
 
 		private int _clearing = 0;
 
-		public DisposingMessageBus()
+		public DisposableMessageBus()
 		{
 			_lazyDict = new Lazy<ConcurrentDictionary<Type, HashSet<object>>>(() => new ConcurrentDictionary<Type, HashSet<object>>());
 			_lazyDefferMsgs = new Lazy<ConcurrentDictionary<Type, HashSet<IMessage>>>(() => new ConcurrentDictionary<Type, HashSet<IMessage>>());
@@ -120,6 +121,7 @@ namespace EventBus.Deferred
 					subscribers = null;
 				}
 			}
+			_lazyDict.Value.Clear();
 
 			foreach (var key in _lazyDefferMsgs.Value.Keys)
 			{
@@ -130,6 +132,7 @@ namespace EventBus.Deferred
 					subscribers = null;
 				}
 			}
+			_lazyDefferMsgs.Value.Clear();
 		}
 	}
 }
