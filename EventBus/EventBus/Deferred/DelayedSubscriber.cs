@@ -1,7 +1,7 @@
 ﻿using EventBus.Infrastructure;
 using System;
 
-namespace EventBus.Deffered
+namespace EventBus.Deferred
 {
 	public class DelayedSubscriber<TEvent> : ISubscriber<TEvent>, INotify<TEvent>, IUnsubscribe, IDisposable where TEvent : class,IMessage
 	{
@@ -18,9 +18,9 @@ namespace EventBus.Deffered
 					DefaultSingleton<ICreator>.Instance = new Implementation.DefaultCreator();
 			}
 
-			if (DefaultSingleton<IDsiposingMessageBus>.Instance == null)
+			if (DefaultSingleton<IDisposingMessageBus>.Instance == null)
 			{
-				DefaultSingleton<IDsiposingMessageBus>.Instance = DefaultSingleton<ICreator>.Instance.Create<DisposingMessageBus>();
+				DefaultSingleton<IDisposingMessageBus>.Instance = DefaultSingleton<ICreator>.Instance.Create<DisposingMessageBus>();
 			}
 		}
 
@@ -55,7 +55,7 @@ namespace EventBus.Deffered
 		public virtual void Subscribe()
 		{
 			System.Threading.Interlocked.Exchange(ref _unsubscribed, 0);
-			subscription = DefaultSingleton<IDsiposingMessageBus>.Instance.Subscribe<TEvent>(this);
+			subscription = DefaultSingleton<IDisposingMessageBus>.Instance.Subscribe<TEvent>(this);
 		}
 
 		public Type GetEventType()

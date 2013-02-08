@@ -6,9 +6,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-namespace EventBus.Deffered
+namespace EventBus.Deferred
 {
-	internal class DisposingMessageBus : IDsiposingMessageBus
+	internal class DisposingMessageBus : IDisposingMessageBus
 	{
 		private readonly Lazy<ConcurrentDictionary<Type, HashSet<object>>> _lazyDict;
 		private readonly Lazy<ConcurrentDictionary<Type, HashSet<IMessage>>> _lazyDefferMsgs;

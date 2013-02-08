@@ -7,7 +7,7 @@ using System.Threading;
 namespace EventBus.Test
 {
 	[TestClass]
-	public class DeferedMessagingTest
+	public class DeferredMessagingTest
 	{
 		private CountdownEvent countEvent;
 
@@ -27,7 +27,7 @@ namespace EventBus.Test
 		}
 
 		[TestMethod]
-		public void TestDeffered()
+		public void TestDeferred()
 		{
 			Publicator p1 = new Publicator();
 
@@ -49,7 +49,7 @@ namespace EventBus.Test
 		}
 
 		[TestMethod]
-		public void TestDeffered2()
+		public void TestDeferred2()
 		{
 			countEvent.Reset(2);
 
@@ -131,7 +131,7 @@ namespace EventBus.Test
 		public int Inner { get; set; }
 	}
 
-	internal class Publicator : Deffered.DelayedPublisher<DefferMessage2>
+	internal class Publicator : Deferred.DelayedPublisher<DefferMessage2>
 	{
 		public override void Publish(DefferMessage2 data)
 		{
@@ -140,7 +140,7 @@ namespace EventBus.Test
 		}
 	}
 
-	internal class Publicator2 : Deffered.DelayedPublisher<DefferMessage1>
+	internal class Publicator2 : Deferred.DelayedPublisher<DefferMessage1>
 	{
 		public override void Publish(DefferMessage1 data)
 		{
@@ -149,7 +149,7 @@ namespace EventBus.Test
 		}
 	}
 
-	internal class Subscriber1 : Deffered.DelayedSubscriber<DefferMessage2>
+	internal class Subscriber1 : Deferred.DelayedSubscriber<DefferMessage2>
 	{
 		public override void Unsubscribe()
 		{
@@ -164,7 +164,7 @@ namespace EventBus.Test
 		}
 	}
 
-	internal class Subscriber2 : Deffered.DelayedSubscriber<DefferMessage1>
+	internal class Subscriber2 : Deferred.DelayedSubscriber<DefferMessage1>
 	{
 		public override void Unsubscribe()
 		{

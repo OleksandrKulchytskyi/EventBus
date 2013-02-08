@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EventBus.Deffered
+namespace EventBus.Deferred
 {
 	public class DelayedPublisher<TEvent> : IPublisher<TEvent> where TEvent : class,IMessage
 	{
@@ -18,15 +18,15 @@ namespace EventBus.Deffered
 					DefaultSingleton<ICreator>.Instance = new Implementation.DefaultCreator();
 			}
 
-			if (DefaultSingleton<IDsiposingMessageBus>.Instance == null)
+			if (DefaultSingleton<IDisposingMessageBus>.Instance == null)
 			{
-				DefaultSingleton<IDsiposingMessageBus>.Instance = DefaultSingleton<ICreator>.Instance.Create<DisposingMessageBus>();
+				DefaultSingleton<IDisposingMessageBus>.Instance = DefaultSingleton<ICreator>.Instance.Create<DisposingMessageBus>();
 			}
 		}
 
 		public virtual void Publish(TEvent data)
 		{
-			DefaultSingleton<IDsiposingMessageBus>.Instance.Publish<TEvent>(data);
+			DefaultSingleton<IDisposingMessageBus>.Instance.Publish<TEvent>(data);
 		}
 	}
 }

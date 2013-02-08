@@ -67,9 +67,9 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Converters\DateTimeConverters.cs" />
-    <Compile Include="Deffered\DelayedPublisher.cs" />
-    <Compile Include="Deffered\DelayedSubscriber.cs" />
-    <Compile Include="Deffered\DisposingMessageBus.cs" />
+    <Compile Include="Deferred\DelayedPublisher.cs" />
+    <Compile Include="Deferred\DelayedSubscriber.cs" />
+    <Compile Include="Deferred\DisposingMessageBus.cs" />
     <Compile Include="Extensions\ConfigExt.cs" />
     <Compile Include="Config\ConfigurationCollectionGeneric.cs" />
     <Compile Include="Config\EventBusConfigSection.cs" />
