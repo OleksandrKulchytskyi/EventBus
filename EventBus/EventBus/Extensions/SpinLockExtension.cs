@@ -14,7 +14,7 @@ namespace EventBus.Extensions
 			try
 			{
 				spinLock.Enter(ref lockTaken);
-				// do work here protected by the lock
+				action();
 			}
 			finally
 			{

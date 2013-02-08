@@ -6,7 +6,8 @@ namespace EventBus.Deffered
 	public class DelayedSubscriber<TEvent> : ISubscriber<TEvent>, INotify<TEvent>, IUnsubscribe, IDisposable where TEvent : class,IMessage
 	{
 		private IDisposable subscription = null;
-		private int _unsubscribed = 0;
+		protected int _unsubscribed = 0;
+		protected int disposed;
 
 		public DelayedSubscriber()
 		{
@@ -62,7 +63,7 @@ namespace EventBus.Deffered
 			return typeof(TEvent);
 		}
 
-		public void Unsubscribe()
+		public virtual void Unsubscribe()
 		{
 			if (System.Threading.Interlocked.Exchange(ref _unsubscribed, 1) == 0)
 				subscription.Dispose();
@@ -70,9 +71,7 @@ namespace EventBus.Deffered
 
 		#region IDisposable Members
 
-		private int disposed;
-
-		private void Dispose(Boolean disposing)
+		protected virtual void Dispose(Boolean disposing)
 		{
 			if (System.Threading.Interlocked.Exchange(ref disposed, 1) == 1)
 				return;

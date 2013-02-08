@@ -24,7 +24,7 @@ namespace EventBus.Deffered
 			}
 		}
 
-		public void Publish(TEvent data)
+		public virtual void Publish(TEvent data)
 		{
 			DefaultSingleton<IDsiposingMessageBus>.Instance.Publish<TEvent>(data);
 		}

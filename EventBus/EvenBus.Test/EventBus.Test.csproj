@@ -82,6 +82,7 @@
     <Compile Include="LingTest.cs" />
     <Compile Include="MessageStoreTest.cs" />
     <Compile Include="SerializerTest.cs" />
+    <Compile Include="DeferedMessagingTest.cs" />
     <Compile Include="WireTest.cs" />
   </ItemGroup>
   <ItemGroup>
