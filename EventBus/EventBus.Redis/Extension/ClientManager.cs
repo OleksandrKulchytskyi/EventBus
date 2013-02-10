@@ -11,7 +11,7 @@ namespace EventBus.Redis.Extension
 		private RedisClientsManager()
 		{
 			//var servers = ConfigurationManager.Instance.GetList("RedisServers");
-			Pool = new PooledRedisClientManager(new string[] { }, Enumerable.Empty<string>());
+			Pool = new PooledRedisClientManager(new string[] { "127.0.0.1:6379" }, Enumerable.Empty<string>());
 		}
 
 		public IRedisClient GetClient()

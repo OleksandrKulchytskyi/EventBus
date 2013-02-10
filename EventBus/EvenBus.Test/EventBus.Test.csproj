@@ -83,6 +83,7 @@
     <Compile Include="MessageStoreTest.cs" />
     <Compile Include="SerializerTest.cs" />
     <Compile Include="DeferredMessagingTest.cs" />
+    <Compile Include="RedisObjContainerTest.cs" />
     <Compile Include="WireTest.cs" />
   </ItemGroup>
   <ItemGroup>

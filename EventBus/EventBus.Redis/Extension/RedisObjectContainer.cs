@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventBus.Redis.Extension
 {
-	public abstract class RobustObjectsContainer<ObjectType, DerrivingType> : SingletonBase<DerrivingType>
+	public abstract class RedisObjectsContainer<ObjectType, DerrivingType> : SingletonBase<DerrivingType>
 		where ObjectType : class, IUniqueLockable, new()
 		where DerrivingType : class
 	{
@@ -17,7 +17,7 @@ namespace EventBus.Redis.Extension
 
 		public bool AutoLoadNewObjects { get; set; }
 
-		private RedisListener Listener;
+		private RedisListener Listener = null;
 
 		public class ObjectEventArgs : EventArgs
 		{
@@ -62,7 +62,7 @@ namespace EventBus.Redis.Extension
 			}
 		}
 
-		protected RobustObjectsContainer()
+		protected RedisObjectsContainer()
 		{
 			TypeName = typeof(ObjectType).Name;
 			OnAdded += new EventHandler<ObjectEventArgs>(OnAddedHandler);
@@ -73,7 +73,7 @@ namespace EventBus.Redis.Extension
 
 		public void Start()
 		{
-			Task.Factory.StartNew(() => Listener.StartListen());
+			Task.Factory.StartNew(() => Listener.StartListen(), TaskCreationOptions.LongRunning);
 		}
 
 		public void Stop()
@@ -246,12 +246,12 @@ namespace EventBus.Redis.Extension
 			private readonly string AddedChannel;
 			private readonly string ChangedChannel;
 			private readonly string DeletedChannel;
-			private readonly RobustObjectsContainer<ObjectType, DerrivingType> _parent;
+			private readonly RedisObjectsContainer<ObjectType, DerrivingType> _parent;
 			private const string Heartbeat = "Server/Heartbeat";
 			private bool _closing = false;
 			private IRedisSubscription _subscription;
 
-			public RedisListener(RobustObjectsContainer<ObjectType, DerrivingType> parent)
+			public RedisListener(RedisObjectsContainer<ObjectType, DerrivingType> parent)
 			{
 				_parent = parent;
 				AddedChannel = _parent.TypeName + "/Added";
