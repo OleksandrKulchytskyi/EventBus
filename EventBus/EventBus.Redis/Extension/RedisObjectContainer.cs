@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 
 namespace EventBus.Redis.Extension
 {
+	public enum RedisErrorCodes
+	{
+		None = 1,
+		SessionIsNotFound = 1,
+		SessionIsBusy = 2
+	}
+
 	public abstract class RedisObjectsContainer<ObjectType, DerrivingType> : SingletonBase<DerrivingType>
 		where ObjectType : class, IUniqueLockable, new()
 		where DerrivingType : class
@@ -219,8 +226,7 @@ namespace EventBus.Redis.Extension
 			}
 		}
 
-		//TODO: inject error handling here
-		public ObjectType GetAndLock(long objectId)//, //ref GSEngineErrorCodes errorCode)
+		public ObjectType GetAndLock(long objectId, ref RedisErrorCodes errorCode)
 		{
 			string key = TypeName + ":" + objectId;
 			ObjectType obj = Get(objectId);
@@ -231,12 +237,12 @@ namespace EventBus.Redis.Extension
 					return PullFromServer(key);
 				}
 
-				//errorCode = GSEngineErrorCodes.SessionIsBusy;
+				errorCode = RedisErrorCodes.SessionIsBusy;
 				return null;
 			}
 			else
 			{
-				//errorCode = GSEngineErrorCodes.SessionIsNotFound;
+				errorCode = RedisErrorCodes.SessionIsNotFound;
 				return null;
 			}
 		}

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace EventBus.Redis.Extension
 {
-	internal class RedisClientsManager : SingletonBase<RedisClientsManager>
+	public class RedisClientsManager : SingletonBase<RedisClientsManager>
 	{
 		private readonly IRedisClientsManager Pool;
 

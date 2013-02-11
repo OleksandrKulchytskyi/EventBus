@@ -68,6 +68,7 @@ namespace EventBus.Redis.Extension
 				}
 				catch (Exception ex)
 				{
+					System.Diagnostics.Debug.WriteLine(ex.Message);
 					subscription.UnSubscribeFromAllChannels();
 					isSubscribed = false;
 					this.Dispose();
