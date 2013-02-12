@@ -80,6 +80,7 @@
     <Compile Include="Extensions\ReaderWriterLockExtension.cs" />
     <Compile Include="Extensions\SpinLockExtension.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\WeakEventHandler.cs" />
     <Compile Include="Hosting\MemoryPublisher.cs" />
     <Compile Include="Hosting\MemorySubscriber.cs" />
     <Compile Include="Implementation\DefaultCreator.cs" />
