@@ -77,9 +77,11 @@
     <Compile Include="Extensions\CreatorExtension.cs" />
     <Compile Include="Extensions\Disposer.cs" />
     <Compile Include="Extensions\DynamicDictionary.cs" />
+    <Compile Include="Extensions\GenericWeakAction.cs" />
     <Compile Include="Extensions\ReaderWriterLockExtension.cs" />
     <Compile Include="Extensions\SpinLockExtension.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\WeakAction.cs" />
     <Compile Include="Extensions\WeakEventHandler.cs" />
     <Compile Include="Hosting\MemoryPublisher.cs" />
     <Compile Include="Hosting\MemorySubscriber.cs" />

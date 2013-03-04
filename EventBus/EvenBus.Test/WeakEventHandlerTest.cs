@@ -23,7 +23,7 @@ namespace EventBus.Test
 		public void ShouldAllowSubscriberReferenceToBeCollected()
 		{
 			var alarm = new Alarm();
-			var sleepyReference = null as WeakReference;
+			var sleepyReference = (null as WeakReference);
 			new Action(() =>
 			{
 				// Run this in a delegate to that the local variable gets garbage collected

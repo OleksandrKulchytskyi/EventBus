@@ -29,6 +29,12 @@ namespace EventBus.Extensions
 					Compile();
 		}
 
+		/// <summary>
+		/// Return the hanler for concrete event
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// <exception cref="System.MissingMethodException" />
 		[DebuggerNonUserCode]
 		public void Handler(object sender, TEventArgs e)
 		{
