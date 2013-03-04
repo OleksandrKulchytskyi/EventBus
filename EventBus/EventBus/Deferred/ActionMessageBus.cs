@@ -40,7 +40,6 @@ namespace EventBus.Deferred
 			{
 				HashSet<WeakAction> dump;
 
-				//TODO: check here !!
 				Type[] args = action.GetType().GetGenericArguments();
 				if (args != null && args.Length > 0)
 				{
