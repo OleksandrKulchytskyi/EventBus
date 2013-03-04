@@ -67,6 +67,7 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Converters\DateTimeConverters.cs" />
+    <Compile Include="Deferred\ActionMessageBus.cs" />
     <Compile Include="Deferred\DelayedPublisher.cs" />
     <Compile Include="Deferred\DelayedSubscriber.cs" />
     <Compile Include="Deferred\DisposingMessageBus.cs" />

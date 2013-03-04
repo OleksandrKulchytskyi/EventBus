@@ -117,8 +117,7 @@ namespace EventBus.Extensions
 
 			if (IsAlive)
 			{
-				if (Method != null
-					&& ActionReference != null)
+				if (Method != null && ActionReference != null)
 				{
 					Method.Invoke(ActionTarget, new object[] { parameter });
 				}
