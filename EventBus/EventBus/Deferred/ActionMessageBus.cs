@@ -67,10 +67,22 @@ namespace EventBus.Deferred
 
 			Parallel.ForEach(container, item =>
 			{
-				if (item != null && (item as WeakAction<T>) != null)
-					(item as WeakAction<T>).ExecuteWithObject(message);
-				else if (item != null)
-					item.Execute();
+				if (item != null && !item.IsAlive)
+				{
+					_locker.SafeWork(() =>
+					{
+						item.MarkForDeletion();
+						container.Remove(item);
+					});
+					return;
+				}
+
+				if (item != null && (item as WeakAction<T>) != null && item.IsAlive)
+					_locker.SafeWork(() => (item as WeakAction<T>).ExecuteWithObject(message));
+				else if (item != null && item.IsAlive)
+					_locker.SafeWork(() => item.Execute());
+
+
 			});
 		}
 

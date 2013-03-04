@@ -120,16 +120,13 @@ namespace EventBus.Extensions
 			get
 			{
 				if (_staticAction == null && Reference == null)
-				{
 					return false;
-				}
 
 				if (_staticAction != null)
 				{
 					if (Reference != null)
-					{
 						return Reference.IsAlive;
-					}
+
 					return true;
 				}
 
