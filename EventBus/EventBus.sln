@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.Redis", "EventBus.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBus.Core", "MessageBus.Core\MessageBus.Core.csproj", "{9D2F3030-EC8E-4AC0-9A75-F293A94EFD67}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.WpfApp", "EventBus.WpfApp\EventBus.WpfApp.csproj", "{09183778-CA01-4747-AB70-C52876088616}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{9D2F3030-EC8E-4AC0-9A75-F293A94EFD67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D2F3030-EC8E-4AC0-9A75-F293A94EFD67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D2F3030-EC8E-4AC0-9A75-F293A94EFD67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09183778-CA01-4747-AB70-C52876088616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09183778-CA01-4747-AB70-C52876088616}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09183778-CA01-4747-AB70-C52876088616}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09183778-CA01-4747-AB70-C52876088616}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

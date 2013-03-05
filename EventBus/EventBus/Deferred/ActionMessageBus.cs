@@ -23,7 +23,7 @@ namespace EventBus.Deferred
 
 		public IDisposable Subscribe<T>(WeakAction<T> action) where T : class,IMessage
 		{
-			NotNull(action, "subscriber");
+			NotNull(action, "action");
 
 			Type key = typeof(T);
 			var container = CheckForKey(key);
@@ -65,22 +65,22 @@ namespace EventBus.Deferred
 
 			if (container.Count == 0) return;
 
-			Parallel.ForEach(container, item =>
+			Parallel.ForEach(container, (item, state) =>
 			{
-				if (item != null && !item.IsAlive)
+				if (item == null || !item.IsAlive)
 				{
 					_locker.SafeWork(() =>
 					{
-						item.MarkForDeletion();
 						container.Remove(item);
+						item.MarkForDeletion();
 					});
 					return;
 				}
 
 				if (item != null && (item as WeakAction<T>) != null && item.IsAlive)
-					_locker.SafeWork(() => (item as WeakAction<T>).ExecuteWithObject(message));
+					(item as WeakAction<T>).ExecuteWithObject(message);
 				else if (item != null && item.IsAlive)
-					_locker.SafeWork(() => item.Execute());
+					item.Execute();
 
 
 			});
