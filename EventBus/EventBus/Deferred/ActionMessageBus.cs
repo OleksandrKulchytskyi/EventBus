@@ -69,11 +69,8 @@ namespace EventBus.Deferred
 			{
 				if (item == null || !item.IsAlive)
 				{
-					_locker.SafeWork(() =>
-					{
-						container.Remove(item);
-						item.MarkForDeletion();
-					});
+					item.MarkForDeletion();
+					_locker.SafeWork(() => container.Remove(item));
 					return;
 				}
 
