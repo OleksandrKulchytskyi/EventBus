@@ -69,18 +69,32 @@ namespace EventBus.Test
 
 			ThreadPool.QueueUserWorkItem(state =>
 			{
+				Thread.Sleep(TimeSpan.FromSeconds(5));
+				sub.Subscribe();
+			}, null);
+			
+			ThreadPool.QueueUserWorkItem(state =>
+			{
 				Thread.Sleep(TimeSpan.FromSeconds(3));
 				sub2.Subscribe();
 			}, null);
 
-			ThreadPool.QueueUserWorkItem(state =>
-			{
-				Thread.Sleep(TimeSpan.FromSeconds(5));
-				sub.Subscribe();
-			}, null);
-
 			if (!countEvent.Wait(TimeSpan.FromMinutes(2)))
 				Assert.Fail();
+			else
+				countEvent.Reset(18);
+
+			p1.Publish(new DefferMessage2() { Content = "Hello world" });
+			p2.Publish(new DefferMessage1() { Data = "Hello world .........1221." });
+
+			p1.Publish(new DefferMessage2() { Content = "Hello world" });
+			p2.Publish(new DefferMessage1() { Data = "Hello world .........1221." });
+
+			p1.Publish(new DefferMessage2() { Content = "Hello world" });
+			p2.Publish(new DefferMessage1() { Data = "Hello world .........1221." });
+
+			p1.Publish(new DefferMessage2() { Content = "Hello world" });
+			p2.Publish(new DefferMessage1() { Data = "Hello world .........1221." });
 
 			sub.Dispose();
 			sub2.Dispose();
@@ -125,9 +139,7 @@ namespace EventBus.Test
 		}
 
 		public Guid Id { get; set; }
-
 		public string Content { get; set; }
-
 		public int Inner { get; set; }
 	}
 
