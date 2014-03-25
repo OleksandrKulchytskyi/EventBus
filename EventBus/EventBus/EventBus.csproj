@@ -113,7 +113,7 @@
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="MessageBus\IMessageBus.cs" />
     <Compile Include="Infrastructure\INotify.cs" />
-    <Compile Include="MessageBus\MessgaeBus.cs" />
+    <Compile Include="MessageBus\MessageBroker.cs" />
     <Compile Include="MessageBus\PublisherMB.cs" />
     <Compile Include="MessageBus\SubscriberMB.cs" />
     <Compile Include="Services\MonitorService.cs" />
