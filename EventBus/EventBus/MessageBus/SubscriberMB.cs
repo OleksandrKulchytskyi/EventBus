@@ -32,7 +32,7 @@ namespace EventBus.MessageBus
 
 		public void Subscribe()
 		{
-			MessgaeBroker.Instance.Subscribe<TEvent>(this);
+			MessageBroker.Instance.Subscribe<TEvent>(this);
 		}
 
 		public Type GetEventType()
@@ -42,7 +42,7 @@ namespace EventBus.MessageBus
 
 		public void Unsubscribe()
 		{
-			MessgaeBroker.Instance.Unsubscribe<TEvent>(this);
+			MessageBroker.Instance.Unsubscribe<TEvent>(this);
 		}
 
 		public virtual void Notify(TEvent msg)

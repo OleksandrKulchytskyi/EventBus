@@ -29,7 +29,7 @@ namespace EventBus.Test
 		[TestMethod]
 		public void GroupTestMethod()
 		{
-			Assert.IsTrue(MessageBus.MessgaeBroker.Instance.GroupCount == 0);
+			Assert.IsTrue(MessageBus.MessageBroker.Instance.GroupCount == 0);
 
 			var pub = new TestEventPublisherMB();
 
@@ -59,7 +59,7 @@ namespace EventBus.Test
 			Assert.IsTrue(thrown);
 
 
-			Assert.IsTrue(MessageBus.MessgaeBroker.Instance.GroupCount == 1);
+			Assert.IsTrue(MessageBus.MessageBroker.Instance.GroupCount == 1);
 
 			pub.Publish(new TestEvent() { Data = "Hello subscribers", Processed = false });
 
@@ -76,9 +76,9 @@ namespace EventBus.Test
 			if (!countEvent.Wait(TimeSpan.FromSeconds(1)))
 				Assert.Fail();
 
-			MessageBus.MessgaeBroker.Instance.Clear();
+			MessageBus.MessageBroker.Instance.Clear();
 
-			Assert.IsTrue(MessageBus.MessgaeBroker.Instance.GroupCount == 0);
+			Assert.IsTrue(MessageBus.MessageBroker.Instance.GroupCount == 0);
 		}
 
 		void sub1_EventHandled(object sender, Infrastructure.BusEventArgs<TestEvent> e)

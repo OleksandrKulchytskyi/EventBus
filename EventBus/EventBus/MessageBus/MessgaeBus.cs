@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace EventBus.MessageBus
 {
-	public class MessgaeBroker : SingletonBase<MessgaeBroker>, IMessageBroker
+	public class MessageBroker : SingletonBase<MessageBroker>, IMessageBroker
 	{
 		private readonly Lazy<ConcurrentDictionary<Type, HashSet<object>>> _lazyContainer = new Lazy<ConcurrentDictionary<Type, HashSet<object>>>(
 				() => new ConcurrentDictionary<Type, HashSet<object>>());
@@ -16,7 +16,7 @@ namespace EventBus.MessageBus
 		private int _draining = 0;
 		private int _groupCount;
 
-		private MessgaeBroker()
+		private MessageBroker()
 		{
 			_groupCount = 0;
 		}
